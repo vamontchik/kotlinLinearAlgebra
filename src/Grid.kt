@@ -11,8 +11,8 @@ class Grid : JPanel() {
         preferredSize = Dimension(10*squareLength, 10*squareLength)
 
         val tempList: MutableList<Square> = ArrayList()
-        for (i in 0..10*squareLength step squareLength) {
-            for (j in 0..10*squareLength step squareLength) {
+        for (i in 0 until 10*squareLength step squareLength) {
+            for (j in 0 until 10*squareLength step squareLength) {
                 tempList.add(Square(i, j, squareLength, squareLength))
             }
         }

@@ -6,7 +6,10 @@ fun main() {
     val grid = Grid()
 
     jFrame.defaultCloseOperation = JFrame.EXIT_ON_CLOSE
-    if (jFrame.contentPane != null) jFrame.contentPane.add(grid) else throw RuntimeException("jFrame contentPane was null!")
+    if (jFrame.contentPane != null)
+        jFrame.contentPane.add(grid)
+    else
+        throw RuntimeException("JFrame.contentPane was null!")
     jFrame.pack()
     jFrame.setLocationRelativeTo(null)
     jFrame.isVisible = true
