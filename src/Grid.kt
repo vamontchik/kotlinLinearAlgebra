@@ -28,15 +28,56 @@ class Grid : JPanel() {
     }
 
     fun spiralPath() {
-        var x = width / 2
-        var y = height / 2
+        val values = Values(width / 2,
+                            height / 2,
+                            0,
+                            0,
+                            false,
+                            0,
+                            Direction.UP)
 
-        setNumber(x, y, "0")
-        y -= squareLength
-        setNumber(x, y, "1")
-        x -= squareLength
-        setNumber(x, y, "2")
-        // ...
+        for (i in 0 until listOfSquares.size) {
+            setNumber(values.x, values.y, values.count.toString())
+            updateValues(values)
+        }
+    }
+
+    private fun updateValues(values: Values) {
+        // update x, y positions
+        when (values.direction) {
+            Direction.UP -> values.y -= squareLength
+            Direction.LEFT -> values.x -= squareLength
+            Direction.DOWN -> values.y += squareLength
+            Direction.RIGHT -> values.x += squareLength
+        }
+
+        // update number to draw on grid
+        ++values.count
+
+        // update next direction we should move, or
+        // else update how many steps left to walk
+        if (values.leftToWalk == 0) {
+            when (values.direction) {
+                Direction.UP -> values.direction = Direction.LEFT
+                Direction.LEFT -> values.direction = Direction.DOWN
+                Direction.DOWN -> values.direction = Direction.RIGHT
+                Direction.RIGHT -> values.direction = Direction.UP
+            }
+
+            // only change total length every two rotations
+            if (values.timeToIncrease) {
+                ++values.totalLength
+                values.timeToIncrease = false
+            } else {
+                values.timeToIncrease = true
+            }
+
+            // update the next amount of steps,
+            // needed to be taken
+            values.leftToWalk = values.totalLength
+        } else {
+            --values.leftToWalk
+        }
     }
 
     private fun setNumber(x: Int, y: Int, setTo: String) {
@@ -50,6 +91,6 @@ class Grid : JPanel() {
                 return square
             }
         }
-        throw RuntimeException("Could not find square based on x: " + x + "y: " + y)
+        throw RuntimeException("Could not find square based on x: $x y: $y")
     }
 }
