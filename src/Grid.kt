@@ -72,8 +72,7 @@ class Grid : JPanel() {
                 values.timeToIncrease = true
             }
 
-            // update the next amount of steps,
-            // needed to be taken
+            // update the next amount of steps needed to be taken
             values.leftToWalk = values.totalLength
         } else {
             --values.leftToWalk
