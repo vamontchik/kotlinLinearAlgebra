@@ -93,11 +93,7 @@ class Grid : JPanel() {
     }
 
     private fun findSquare(x: Int, y: Int): Square {
-        for (square in listOfSquares) {
-            if (square.contains(x, y)) {
-                return square
-            }
-        }
-        throw RuntimeException("Could not find square based on x: $x y: $y")
+        return listOfSquares.find { it.contains(x,y) } ?:
+               throw RuntimeException("listOfSquares could not find a square at x: $x, y: $y")
     }
 }
