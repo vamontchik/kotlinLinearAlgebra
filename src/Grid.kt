@@ -1,22 +1,29 @@
 import java.awt.Dimension
 import java.awt.Graphics
-import java.lang.RuntimeException
+import java.lang.Math.sqrt
 import javax.swing.JPanel
 
 class Grid : JPanel() {
     private val listOfSquares: List<Square>
     private val squareLength: Int = 50
+    private val numRowCol: Int = 18
 
     init {
-        preferredSize = Dimension(10*squareLength, 10*squareLength)
-
+        preferredSize = Dimension(numRowCol*squareLength, numRowCol*squareLength)
         val tempList: MutableList<Square> = ArrayList()
-        for (i in 0 until 10*squareLength step squareLength) {
-            for (j in 0 until 10*squareLength step squareLength) {
+        for (i in 0 until numRowCol*squareLength step squareLength) {
+            for (j in 0 until numRowCol*squareLength step squareLength) {
                 tempList.add(Square(i, j, squareLength, squareLength))
             }
         }
         listOfSquares = tempList
+    }
+
+    private fun isPerfectSquare(i: Int): Boolean {
+        val sqrtVal = sqrt(i.toDouble())
+        val compareVal = sqrtVal.toInt().toDouble()
+        val tolerance = 0.0001
+        return ((sqrtVal - compareVal) < tolerance)
     }
 
     override fun paintComponent(g: Graphics?) {
@@ -37,9 +44,15 @@ class Grid : JPanel() {
                             Direction.UP)
 
         for (i in 0 until listOfSquares.size) {
-            setNumber(values.x, values.y, values.count.toString())
+            setNumberAndBold(values.x, values.y, values.count.toString(), values.count)
             updateValues(values)
         }
+    }
+
+    private fun setNumberAndBold(x: Int, y: Int, setTo: String, count: Int) {
+        val currSquare = findSquare(x, y)
+        currSquare.labelCorner = setTo
+        currSquare.isBold = isPerfectSquare(count)
     }
 
     private fun updateValues(values: Values) {
@@ -77,11 +90,6 @@ class Grid : JPanel() {
         } else {
             --values.leftToWalk
         }
-    }
-
-    private fun setNumber(x: Int, y: Int, setTo: String) {
-        val currSquare = findSquare(x, y)
-        currSquare.labelCorner = setTo
     }
 
     private fun findSquare(x: Int, y: Int): Square {
