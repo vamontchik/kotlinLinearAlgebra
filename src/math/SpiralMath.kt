@@ -7,13 +7,13 @@ import kotlin.math.floor
 import kotlin.math.sqrt
 
 fun spiralPath(grid: Grid) {
-    val values = Values(grid.width / 2,
-                        grid.height / 2,
-                        0,
-                        0,
-                        false,
-                        0,
-                        Direction.UP)
+    val values = Values(/*x =*/ grid.width / 2,
+                        /*y =*/ grid.height / 2,
+                        /*leftToWalk =*/ 0,
+                        /*totalLength = */ 0,
+                        /*timeToIncrease =*/ false,
+                        /*count =*/ 0,
+                        /*direction =*/ Direction.UP)
 
     for (i in 0 until grid.listOfSquares.size) {
         setNumberAndBold(values.x, values.y, values.count.toString(), values.count, grid)
