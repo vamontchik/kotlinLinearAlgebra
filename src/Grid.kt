@@ -5,8 +5,8 @@ import javax.swing.JPanel
 
 class Grid : JPanel() {
     private val listOfSquares: List<Square>
-    private val squareLength: Int = 50
-    private val numRowCol: Int = 18
+    private val squareLength: Int = 75
+    private val numRowCol: Int = 15
 
     init {
         preferredSize = Dimension(numRowCol*squareLength, numRowCol*squareLength)
