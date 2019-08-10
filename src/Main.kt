@@ -1,3 +1,6 @@
+import math.getEquationVerticalUp
+import math.spiralPath
+import ui.Grid
 import java.lang.RuntimeException
 import javax.swing.JFrame
 
@@ -15,6 +18,6 @@ fun main() {
     jFrame.setLocationRelativeTo(null)
     jFrame.isVisible = true
 
-    grid.spiralPath()
-    grid.getEquationVerticalUp(grid.width / 2, grid.height / 2)
+    spiralPath(grid)
+    getEquationVerticalUp(grid.width / 2, grid.height / 2, grid)
 }
