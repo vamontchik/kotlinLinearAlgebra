@@ -1,8 +1,6 @@
 package math
 
 import ui.Grid
-import java.lang.RuntimeException
-import kotlin.collections.ArrayList
 import kotlin.math.pow
 
 fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
@@ -21,11 +19,12 @@ fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
     }
 
     // set-up the matrices
-    val A: Array<Array<Double>> = Array(points.size) {
+    val fillForA: Array<Array<Double>> = Array(points.size) {
         val doubleRep = it.toDouble()
         arrayOf(doubleRep.pow(2.0), doubleRep, 1.0)
     }
-    val b: Array<Double> = points.toTypedArray()
+    val A = Matrix(fillForA)
+    val b = Vector(points.toTypedArray())
 
     // use linear least squares to find coefficients (x vector)
     // for an equation of the form ax^2 + bx + c
@@ -35,34 +34,19 @@ fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
     val (U, E, Vt) = svd(A)
 }
 
-private fun svd(A: Array<Array<Double>>):
-        Triple<Array<Array<Double>>, Array<Array<Double>>, Array<Array<Double>>> {
-    println("A: " + A.contentDeepToString())
+private fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
+    println("A: $A")
 
-    val At: Array<Array<Double>> = transpose(A)
-    println("At: " + At.contentDeepToString())
+    val At: Matrix = transpose(A)
+    println("At: $At")
 
     return Triple(At, At, At) // dummy for compiler
 }
 
-private fun transpose(matrix: Array<Array<Double>>): Array<Array<Double>> {
-    val matrixT: MutableList<Array<Double>> = mutableListOf()
-    for (i in 0 until matrix[0].size) {
-        matrixT.add(getCol(i, matrix))
+private fun transpose(matrix: Matrix): Matrix {
+    val temp: MutableList<Array<Double>> = mutableListOf()
+    for (i in 0 until matrix.getRow(0).size) {
+        temp.add(matrix.getCol(i))
     }
-    return matrixT.toTypedArray()
-}
-
-private fun getRow(index: Int, matrix: Array<Array<Double>>): Array<Double> {
-    if (index < 0 || index >= matrix.size) {
-        throw RuntimeException("Index is invalid! index: $index, matrix size: " + matrix.size)
-    }
-    return matrix[index]
-}
-
-private fun getCol(index: Int, matrix: Array<Array<Double>>): Array<Double> {
-    if (index < 0 || index >= matrix[0].size) {
-        throw RuntimeException("Index is invalid! index: $index, matrix size: " + matrix[0].size)
-    }
-    return matrix.map { it[index] }.toTypedArray()
+    return Matrix(temp.toTypedArray())
 }
