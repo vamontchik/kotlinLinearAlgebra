@@ -1,7 +1,10 @@
 import java.awt.Dimension
 import java.awt.Graphics
 import java.lang.Math.sqrt
+import java.util.*
 import javax.swing.JPanel
+import kotlin.collections.ArrayList
+import kotlin.math.pow
 
 class Grid : JPanel() {
     private val listOfSquares: List<Square>
@@ -95,5 +98,35 @@ class Grid : JPanel() {
     private fun findSquare(x: Int, y: Int): Square {
         return listOfSquares.find { it.contains(x,y) } ?:
                throw RuntimeException("listOfSquares could not find a square at x: $x, y: $y")
+    }
+
+    fun getEquationVerticalUp(x: Int, y: Int) {
+        // populate pairs lists with "pairs" of points,
+        // where .first == x and .second == y, so the
+        // pairs will be (x, y) coordinates
+        val points: MutableList<Double> = ArrayList()
+        var currentY = y
+        while (currentY > 0) {
+            val square = findSquare(x, currentY)
+            val numberForSquare = square.labelCorner.toInt()
+
+            points.add(numberForSquare.toDouble())
+
+            currentY -= squareLength
+        }
+
+        // set-up the matrices
+        val A: Array<DoubleArray> = Array(points.size) {
+            val doubleRep = it.toDouble()
+            doubleArrayOf(doubleRep.pow(2.0), doubleRep, 1.0)
+        }
+        val b: Array<Double> = points.toTypedArray()
+
+        println(Arrays.deepToString(A))
+        println(Arrays.deepToString(b))
+
+        // use linear least squares to find coefficients for
+        // an equation of the form ax^2 + bx + c
+        // TODO: make the linear algebra library that does this!
     }
 }
