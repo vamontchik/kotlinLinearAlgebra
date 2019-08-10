@@ -3,6 +3,7 @@ package math
 import ui.Direction
 import ui.Grid
 import ui.Values
+import kotlin.math.floor
 import kotlin.math.sqrt
 
 fun spiralPath(grid: Grid) {
@@ -64,8 +65,8 @@ private fun updateValues(values: Values, grid: Grid) {
 }
 
 private fun isPerfectSquare(i: Int): Boolean {
-    val squareRootVal = sqrt(i.toDouble())
-    val compareVal = squareRootVal.toInt().toDouble()
+    val squareRootVal: Double = sqrt(i.toDouble())
+    val compareVal: Double = floor(squareRootVal)
     val tolerance = 0.0001
     return ((squareRootVal - compareVal) < tolerance)
 }
