@@ -6,7 +6,7 @@ import javax.swing.JPanel
 
 class Grid : JPanel() {
     val listOfSquares: List<Square>
-    private val numRowCol: Int = 15
+    private val numRowCol: Int = 16
     val squareLength: Int = 75
 
     init {

@@ -1,13 +1,11 @@
 package math
 
 import ui.Grid
-import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.math.pow
 
 fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
-    println("Calling getEquationVerticalUp with loc: " +
-            "startX: $startX, startY: $startY")
+    println("Calling getEquationVerticalUp with loc: startX: $startX, startY: $startY")
 
     // populate pairs lists with "pairs" of points,
     // where .first == x and .second == y, so the
@@ -28,10 +26,10 @@ fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
     }
     val matrixB: Array<Double> = points.toTypedArray()
 
-    println(Arrays.deepToString(matrixA))
-    println(Arrays.deepToString(matrixB))
+    println("A: " + matrixA.contentDeepToString())
+    println("b: " + matrixB.contentDeepToString())
 
-    // use linear least squares to find coefficients for
-    // an equation of the form ax^2 + bx + c
-    // TODO: make the linear algebra library that does this!
+    // use linear least squares to find coefficients (x vector)
+    // for an equation of the form ax^2 + bx + c
+    // TODO: code the linear algebra stuff for this by hand...
 }
