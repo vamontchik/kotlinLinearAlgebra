@@ -3,6 +3,7 @@ package math
 import ui.Grid
 import java.lang.RuntimeException
 import kotlin.math.pow
+import kotlin.random.Random
 
 fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
     println("Calling getEquationVerticalUp with loc: startX: $startX, startY: $startY")
@@ -41,8 +42,11 @@ private fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
     val At: Matrix = transpose(A)
     println("At: $At")
 
-    val product: Matrix = multiply(At, A)
+    val product: Matrix = dot(At, A)
     println("product: $product")
+
+    val eigenvalues: Vector = eigenvalues(product)
+    println("eigenvalues: $eigenvalues")
 
     // TODO: finish svd calculation...
 
@@ -56,7 +60,7 @@ private fun transpose(matrix: Matrix): Matrix {
     return Matrix(temp)
 }
 
-private fun multiply(first: Matrix, second: Matrix): Matrix {
+private fun dot(first: Matrix, second: Matrix): Matrix {
     if (first.width != second.height) {
         throw RuntimeException("Dimension mismatch! first.width: " + first.width + " second.height: " + second.height)
     }
@@ -71,4 +75,31 @@ private fun multiply(first: Array<Double>, second: Array<Double>): Array<Double>
         throw RuntimeException("Dimension mismatch! first.size: " + first.size + " second.size: " + second.size)
     }
     return Array(first.size) { first[it] * second[it] }
+}
+
+private fun eigenvalues(matrix: Matrix): Vector {
+    val amount: Int =
+        if (matrix.width < matrix.height) {
+            matrix.width
+        } else {
+            matrix.height
+        }
+
+    val values: Array<Double> = Array(amount) {
+        powerIteration(matrix, it)
+    }
+
+    // TODO: finish eigenvalues calculation...
+
+    return Vector(arrayOf()) // dummy for compiler
+}
+
+private fun powerIteration(matrix: Matrix, index: Int): Double {
+    val initial: Array<Double> = Array(matrix.height) {
+        Random.nextDouble()
+    }
+
+    // TODO: finish power iteration calculation...
+
+    return -1.0 // dummy for compiler
 }
