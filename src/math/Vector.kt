@@ -2,8 +2,14 @@ package math
 
 import java.lang.RuntimeException
 
+// TODO: change from primary constructor to two constructors,
+//       where one takes in an Array<Array<Double>> and saves it,
+//       and the other takes in the an int size and (Int) -> T function,
+//       which are used with Array's constructor
 data class Vector(private val vector: Array<Double>) {
-    fun getElem(index: Int): Double {
+    val size: Int = vector.size
+
+    fun get(index: Int): Double {
         if (index < 0 || index >= vector.size) {
             throw RuntimeException("Index is invalid! index: $index, vector.size: " + vector.size)
         }

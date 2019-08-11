@@ -2,7 +2,14 @@ package math
 
 import java.lang.RuntimeException
 
+// TODO: change from primary constructor to two constructors,
+//       where one takes in an Array<Array<Double>> and saves it,
+//       and the other takes in the an int size and (Int) -> T function,
+//       which are used with Array's constructor
 data class Matrix(private val matrix: Array<Array<Double>>) {
+    val width: Int = matrix.size
+    val height: Int = matrix[0].size
+
     fun getRow(index: Int): Array<Double> {
         if (index < 0 || index >= matrix.size) {
             throw RuntimeException("Index is invalid! index: $index, matrix size: " + matrix.size)
