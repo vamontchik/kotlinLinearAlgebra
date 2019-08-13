@@ -145,10 +145,7 @@ private fun multiply(first: Vector, second: Matrix): Vector {
 }
 
 private fun scalarDivide(v: Vector, divisor: Double): Vector {
-    for (i in 0 until v.size) {
-        v[i] /= divisor
-    }
-    return v
+    return v.map { value -> value / divisor }.toTypedArray()
 }
 
 private fun norm(v: Vector): Double {
@@ -168,9 +165,12 @@ private fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
         Array(amount) { 0.0 }
     }
 
-    // TODO: add in shifting of the matrix
-    //       so that we can get all the eigenvalues,
-    //       not just the most dominant one multiple times...
+    // TODO: add in Hotelling's deflation
+    //       so that we can find second, third, ...
+    //       eigenvectors / eigenvalues , not just
+    //       the most dominant multiple times ^^
+    //       link: http://www.robots.ox.ac.uk/~sjrob/Teaching/EngComp/ecl4.pdf
+    //       link2: https://math.stackexchange.com/questions/768882/power-method-for-finding-all-eigenvectors
     for (i in 0 until amount) {
         val eigenvector: Vector = powerIteration(matrix)
         val eigenvalue: Double = raleighQuotient(matrix, eigenvector)
@@ -190,12 +190,10 @@ private fun raleighQuotient(matrix: Matrix, eigenvector: Vector): Double {
 }
 
 private fun powerIteration(matrix: Matrix): Vector {
-    var b: Vector = Array(getHeight(matrix)) {
-        Random.nextDouble()
-    }
-
-    var numerator: Array<Double>
+    var b: Vector = Array(getHeight(matrix)) { Random.nextDouble() }
+    var numerator: Vector
     var denominator: Double
+
     for (i in 0 until 50) {
         numerator = multiply(matrix, b)
         denominator = norm(numerator)
