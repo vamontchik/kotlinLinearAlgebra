@@ -2,9 +2,10 @@ package math
 
 import ui.Grid
 import kotlin.math.pow
+import kotlin.random.Random
 
-typealias Matrix = Array<Array<Double>>
-typealias Vector = Array<Double>
+private typealias Matrix = Array<Array<Double>>
+private typealias Vector = Array<Double>
 
 fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
     println("Calling getEquationVerticalUp with loc: startX: $startX, startY: $startY")
@@ -66,29 +67,11 @@ private fun getHeight(matrix: Matrix): Int {
     return matrix.size
 }
 
-private fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
-    printMatrix(A)
-
-    val At: Matrix = transpose(A)
-    printMatrix(At)
-
-    val product: Matrix = multiply(At, A)
-    printMatrix(product)
-
-    // val eigenvalues: Vector = eigenvalues(product)
-    // println("eigenvalues: $eigenvalues")
-
-    // TODO: finish svd calculation...
-
-    return Triple(At, At, At) // dummy for compiler
-}
-
 private fun printMatrix(matrix: Matrix) {
     println("Matrix:")
     for (row in 0 until getHeight(matrix)) {
         println(getRow(matrix, row).contentDeepToString())
     }
-    println()
 }
 
 private fun transpose(matrix: Matrix): Matrix {
@@ -96,18 +79,6 @@ private fun transpose(matrix: Matrix): Matrix {
         getCol(matrix, it)
     }
 }
-
-//private fun multiply(first: Matrix, second: Matrix): Matrix {
-//    if (getWidth(first) != getHeight(second)) {
-//        throw RuntimeException(
-//            "Dimension mismatch! first.width: " + getWidth(first) +
-//            ", second.height: " + getHeight(second)
-//        )
-//    }
-//    return Array(first.size) {
-//        multiply(getRow(first, it), getCol(second, it))
-//    }
-//}
 
 private fun dot(first: Vector, second: Vector): Double {
     if (first.size != second.size) {
@@ -137,33 +108,113 @@ private fun multiply(first: Matrix, second: Matrix): Matrix {
     return result
 }
 
-//private fun eigenvalues(matrix: Matrix): Vector {
-//    val amount: Int =
-//        if (getWidth(matrix) < getHeight(matrix)) {
-//            getWidth(matrix)
-//        } else {
-//            getHeight(matrix)
-//        }
+// the only meaningful way to multiply a vector by
+// a matrix is to multiply the vector by each column or
+// row of the matrix. Whether or not it is by each column
+// or by each row is determined by which goes first:
 //
-//    val values: Vector = Array(amount) {
-//        powerIteration(matrix, it)
-//    }
-//
-//    // TODO: finish eigenvalues calculation...
-//
-//    return arrayOf() // dummy for compiler
-//}
-//
-//private fun powerIteration(matrix: Matrix, index: Int): Double {
-//    var b: Vector = Array(getHeight(matrix)) {
-//        Random.nextDouble()
-//    }
-//
-//    for (i in 0 until 50) {
-//        b = multiply(matrix, b)
-//    }
-//
-//    // TODO: finish power iteration calculation...
-//
-//    return -1.0 // dummy for compiler
-//}
+// matrix * vector == each row of matrix * vector
+// vector * matrix == vector * each col of matrix
+
+private fun multiply(first: Matrix, second: Vector): Vector {
+    // A      = m x n
+    // B      = n x 1
+    // result = m x 1
+
+    val result: Vector = Array(first.size) { 0.0 }
+
+    for (i in 0 until getHeight(first)) {
+        result[i] = dot(getRow(first, i), second)
+    }
+
+    return result
+}
+
+private fun multiply(first: Vector, second: Matrix): Vector {
+    // A = m x 1
+    // B = m x n
+    // do: A^T * B
+    // result = 1 x n
+
+    val result: Vector = Array(second[0].size) { 0.0 }
+    for (i in 0 until getWidth(second)) {
+        result[i] = dot(first, getCol(second, i))
+    }
+    return result
+}
+
+private fun scalarDivide(v: Vector, divisor: Double): Vector {
+    for (i in 0 until v.size) {
+        v[i] /= divisor
+    }
+    return v
+}
+
+private fun norm(v: Vector): Double {
+    return v.reduce { acc, value -> acc.plus(value) }
+}
+
+private fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
+     val amount: Int =
+        if (getWidth(matrix) < getHeight(matrix)) {
+            getWidth(matrix)
+        } else {
+            getHeight(matrix)
+        }
+
+    val eigenvalues: Vector = Array(amount) { 0.0 }
+    val eigenvectors: Matrix = Array(amount) {
+        Array(amount) { 0.0 }
+    }
+
+    for (i in 0 until amount) {
+        val eigenvector: Vector = powerIteration(matrix)
+        val eigenvalue: Double = raleighQuotient(matrix, eigenvector)
+
+        eigenvectors[i] = eigenvector
+        eigenvalues[i] = eigenvalue
+    }
+
+    return Pair(eigenvalues, eigenvectors)
+}
+
+private fun raleighQuotient(matrix: Matrix, eigenvector: Vector): Double {
+    val halfNumerator: Vector = multiply(eigenvector, matrix)
+    val numerator: Double = dot(halfNumerator, eigenvector)
+    val denominator: Double = dot(eigenvector, eigenvector)
+    return numerator / denominator
+}
+
+private fun powerIteration(matrix: Matrix): Vector {
+    var b: Vector = Array(getHeight(matrix)) {
+        Random.nextDouble()
+    }
+
+    var numerator: Array<Double>
+    var denominator: Double
+    for (i in 0 until 50) {
+        numerator = multiply(matrix, b)
+        denominator = norm(numerator)
+        b = scalarDivide(numerator, denominator)
+    }
+
+    return b
+}
+
+private fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
+    printMatrix(A)
+
+    val At: Matrix = transpose(A)
+    printMatrix(At)
+
+    val product: Matrix = multiply(At, A)
+    printMatrix(product)
+
+    val (eigenvalues, eigenvectors) = eigen(product)
+    println("eigenvalues: " + eigenvalues.contentDeepToString())
+    printMatrix(eigenvectors)
+
+    // TODO: finish svd calculation...
+
+    return Triple(A, A, A) // dummy for compiler
+}
