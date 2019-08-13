@@ -134,7 +134,8 @@ private fun multiply(first: Vector, second: Matrix): Vector {
     // A = m x 1
     // B = m x n
     // do: A^T * B
-    // result = 1 x n
+    // result = 1 x n, but it's really expressed as "n x 1,"
+    //          since vectors here don't maintain orientation
 
     val result: Vector = Array(second[0].size) { 0.0 }
     for (i in 0 until getWidth(second)) {
