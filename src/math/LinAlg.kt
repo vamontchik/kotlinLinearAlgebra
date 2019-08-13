@@ -120,14 +120,7 @@ private fun multiply(first: Matrix, second: Vector): Vector {
     // A      = m x n
     // B      = n x 1
     // result = m x 1
-
-    val result: Vector = Array(first.size) { 0.0 }
-
-    for (i in 0 until getHeight(first)) {
-        result[i] = dot(getRow(first, i), second)
-    }
-
-    return result
+    return first.map { row -> dot(row, second) }.toTypedArray()
 }
 
 private fun multiply(first: Vector, second: Matrix): Vector {
@@ -137,7 +130,7 @@ private fun multiply(first: Vector, second: Matrix): Vector {
     // result = 1 x n, but it's really expressed as "n x 1",
     //          since vectors here don't maintain orientation
 
-    val result: Vector = Array(second[0].size) { 0.0 }
+    val result: Vector = Array(getWidth(second)) { 0.0 }
     for (i in 0 until getWidth(second)) {
         result[i] = dot(first, getCol(second, i))
     }
@@ -183,8 +176,7 @@ private fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
 }
 
 private fun raleighQuotient(matrix: Matrix, eigenvector: Vector): Double {
-    val halfNumerator: Vector = multiply(eigenvector, matrix)
-    val numerator: Double = dot(halfNumerator, eigenvector)
+    val numerator: Double = dot(multiply(eigenvector, matrix), eigenvector)
     val denominator: Double = dot(eigenvector, eigenvector)
     return numerator / denominator
 }
