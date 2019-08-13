@@ -167,6 +167,9 @@ private fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
         Array(amount) { 0.0 }
     }
 
+    // TODO: add in shifting of the matrix
+    //       so that we can get all the eigenvalues,
+    //       not just the most dominant one multiple times...
     for (i in 0 until amount) {
         val eigenvector: Vector = powerIteration(matrix)
         val eigenvalue: Double = raleighQuotient(matrix, eigenvector)
