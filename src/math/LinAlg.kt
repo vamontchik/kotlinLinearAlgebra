@@ -110,10 +110,6 @@ private fun multiply(first: Matrix, second: Matrix): Matrix {
 
     val result: Matrix = zeroMatrix(getWidth(second), getHeight(first))
 
-    //val result: Matrix = Array(getHeight(first)) {
-    //    Array(getWidth(second)) { 0.0 }
-    //}
-
     for (col in 0 until getWidth(second)) {
         for (row in 0 until getHeight(first)) {
             result[row][col] = dot(getRow(first, row), getCol(second, col))
@@ -164,10 +160,6 @@ private fun multiply(first: Vector, second: Vector): Matrix {
 
     val result: Matrix = zeroMatrix(second.size, first.size)
 
-    //val result: Matrix = Array(first.size) {
-    //    Array(second.size) { 0.0 }
-    //}
-
     for (row in 0 until first.size) {
         for (col in 0 until second.size) {
             result[row][col] = first[row] * second[col]
@@ -177,7 +169,6 @@ private fun multiply(first: Vector, second: Vector): Matrix {
     return result
 }
 
-// TODO: double check if this is the proper calc for norm
 private fun norm(v: Vector): Double {
     val acc: Double = v.reduce { acc, value -> acc.plus(value.pow(2)) }
     return sqrt(acc)
@@ -225,7 +216,6 @@ private fun zeroMatrix(width: Int, height: Int): Matrix {
     }
 }
 
-// TODO: create an add() operation between Matrix and Matrix
 private fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
     val rightHandMatrix: Matrix = scalarMultiply(
         eigenvalue / norm(eigenvector),
