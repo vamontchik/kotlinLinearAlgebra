@@ -81,6 +81,18 @@ fun transpose(matrix: Matrix): Matrix {
     }
 }
 
+fun add(first: Matrix, second: Matrix): Matrix {
+    val result: Matrix = zeroMatrix(getWidth(first), getHeight(first))
+
+    for (row in 0 until getHeight(result)) {
+        for (col in 0 until getWidth(result)) {
+            result[row][col] = first[row][col] + second[row][col]
+        }
+    }
+
+    return result
+}
+
 fun subtract(first: Matrix, second: Matrix): Matrix {
     val result: Matrix = zeroMatrix(getWidth(first), getHeight(first))
 
