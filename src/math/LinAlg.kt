@@ -5,8 +5,8 @@ import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
 
-private typealias Matrix = Array<Array<Double>>
-private typealias Vector = Array<Double>
+typealias Matrix = Array<Array<Double>>
+typealias Vector = Array<Double>
 
 fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
     println("Calling getEquationVerticalUp with loc: startX: $startX, startY: $startY")
@@ -38,14 +38,14 @@ fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
     // TODO: finish least squares calculation...
 }
 
-private fun getRow(matrix: Matrix, index: Int): Vector {
+fun getRow(matrix: Matrix, index: Int): Vector {
     if (index < 0 || index >= getHeight(matrix)) {
         throw RuntimeException("Index is invalid! index: $index, num rows: " + getHeight(matrix))
     }
     return matrix[index]
 }
 
-private fun getCol(matrix: Matrix, index: Int): Vector {
+fun getCol(matrix: Matrix, index: Int): Vector {
     if (index < 0 || index >= getWidth(matrix)) {
         throw RuntimeException("Index is invalid! index: $index, num columns: " + getWidth(matrix))
     }
@@ -56,7 +56,7 @@ private fun getCol(matrix: Matrix, index: Int): Vector {
  * Width = the amount of values in one inner array,
  * since we are looking row-major
  */
-private fun getWidth(matrix: Matrix): Int {
+fun getWidth(matrix: Matrix): Int {
     return matrix[0].size
 }
 
@@ -64,36 +64,36 @@ private fun getWidth(matrix: Matrix): Int {
  * Height = the amount of inner arrays, since
  * we are looking row-major
  */
-private fun getHeight(matrix: Matrix): Int {
+fun getHeight(matrix: Matrix): Int {
     return matrix.size
 }
 
-private fun printMatrix(name: String, matrix: Matrix) {
+fun printMatrix(name: String, matrix: Matrix) {
     println("$name:")
     for (row in 0 until getHeight(matrix)) {
         println(getRow(matrix, row).contentDeepToString())
     }
 }
 
-private fun transpose(matrix: Matrix): Matrix {
+fun transpose(matrix: Matrix): Matrix {
     return Array(getWidth(matrix)) {
         getCol(matrix, it)
     }
 }
 
-private fun add(first: Matrix, second: Matrix): Matrix {
+fun subtract(first: Matrix, second: Matrix): Matrix {
     val result: Matrix = zeroMatrix(getWidth(first), getHeight(first))
 
     for (row in 0 until getHeight(result)) {
         for (col in 0 until getWidth(result)) {
-            result[row][col] = first[row][col] + second[row][col]
+            result[row][col] = first[row][col] - second[row][col]
         }
     }
 
     return result
 }
 
-private fun dot(first: Vector, second: Vector): Double {
+fun dot(first: Vector, second: Vector): Double {
     if (first.size != second.size) {
         throw RuntimeException(
             "Dimension mismatch! first.size: " + first.size +
@@ -103,7 +103,7 @@ private fun dot(first: Vector, second: Vector): Double {
     return first.mapIndexed { index, value -> value * second[index] }.sum()
 }
 
-private fun multiply(first: Matrix, second: Matrix): Matrix {
+fun multiply(first: Matrix, second: Matrix): Matrix {
     // A      = m x n
     // B      = n x p
     // result = m x p
@@ -127,7 +127,7 @@ private fun multiply(first: Matrix, second: Matrix): Matrix {
 // matrix * vector == each row of matrix * vector
 // vector * matrix == vector * each col of matrix
 
-private fun multiply(first: Matrix, second: Vector): Vector {
+fun multiply(first: Matrix, second: Vector): Vector {
     // A      = m x n
     // B      = 1 x n
     // Do: A * B^T, or each row multiplied by vector
@@ -135,7 +135,7 @@ private fun multiply(first: Matrix, second: Vector): Vector {
     return first.map { row -> dot(row, second) }.toTypedArray()
 }
 
-private fun multiply(first: Vector, second: Matrix): Vector {
+fun multiply(first: Vector, second: Matrix): Vector {
     // A = 1 x m
     // B = m x n
     // Do: A * B, or vector multiplied by each column in matrix
@@ -152,7 +152,7 @@ private fun multiply(first: Vector, second: Matrix): Vector {
 // multiplication where the result reduces to a single value,
 // use this method for the other way (ie. when vector * vector
 // would turn into a matrix)
-private fun multiply(first: Vector, second: Vector): Matrix {
+fun multiply(first: Vector, second: Vector): Matrix {
     // first: m x 1
     // second: n x 1
     // Do: first * second^T, or each value in each vector multiplied once together
@@ -169,12 +169,12 @@ private fun multiply(first: Vector, second: Vector): Matrix {
     return result
 }
 
-private fun norm(v: Vector): Double {
+fun norm(v: Vector): Double {
     val acc: Double = v.reduce { acc, value -> acc.plus(value.pow(2)) }
     return sqrt(acc)
 }
 
-private fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
+fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
      val amount: Int =
         if (getWidth(matrix) < getHeight(matrix)) {
             getWidth(matrix)
@@ -185,12 +185,6 @@ private fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     val eigenvalues: Vector = zeroVector(amount)
     val eigenvectors: Matrix = zeroMatrix(amount, amount)
 
-    // TODO: add in Hotelling's deflation
-    //       so that we can find second, third, ...
-    //       eigenvectors / eigenvalues , not just
-    //       the most dominant multiple times ^^
-    //       link: http://www.robots.ox.ac.uk/~sjrob/Teaching/EngComp/ecl4.pdf
-    //       link2: https://math.stackexchange.com/questions/768882/power-method-for-finding-all-eigenvectors
     var currMatrix: Matrix = matrix
     for (i in 0 until amount) {
         printMatrix("currMatrix", currMatrix)
@@ -206,40 +200,40 @@ private fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     return Pair(eigenvalues, eigenvectors)
 }
 
-private fun zeroVector(size: Int): Vector {
+fun zeroVector(size: Int): Vector {
     return Array(size) { 0.0 }
 }
 
-private fun zeroMatrix(width: Int, height: Int): Matrix {
+fun zeroMatrix(width: Int, height: Int): Matrix {
     return Array(height) {
         Array(width) { 0.0 }
     }
 }
 
-private fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
+fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
     val rightHandMatrix: Matrix = scalarMultiply(
         eigenvalue / norm(eigenvector),
         multiply(eigenvector, eigenvector)
     )
 
-    return add(currMatrix, rightHandMatrix)
+    return subtract(currMatrix, rightHandMatrix)
 }
 
-private fun scalarMultiply(scalar: Double, matrix: Matrix): Matrix {
+fun scalarMultiply(scalar: Double, matrix: Matrix): Matrix {
     return matrix.map { it.map { it.times(scalar) }.toTypedArray() }.toTypedArray()
 }
 
-private fun scalarDivide(scalar: Double, v: Vector): Vector {
+fun scalarDivide(scalar: Double, v: Vector): Vector {
     return v.map { value -> value / scalar }.toTypedArray()
 }
 
-private fun raleighQuotient(matrix: Matrix, eigenvector: Vector): Double {
+fun raleighQuotient(matrix: Matrix, eigenvector: Vector): Double {
     val numerator: Double = dot(multiply(eigenvector, matrix), eigenvector)
     val denominator: Double = dot(eigenvector, eigenvector)
     return numerator / denominator
 }
 
-private fun powerIteration(matrix: Matrix): Vector {
+fun powerIteration(matrix: Matrix): Vector {
     var b: Vector = Array(getHeight(matrix)) { Random.nextDouble() }
     var numerator: Vector
     var denominator: Double
@@ -253,7 +247,7 @@ private fun powerIteration(matrix: Matrix): Vector {
     return b
 }
 
-private fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
+fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
     printMatrix("A", A)
 
     val At: Matrix = transpose(A)
