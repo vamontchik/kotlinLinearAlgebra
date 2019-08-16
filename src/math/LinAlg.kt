@@ -198,15 +198,20 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     val eigenvectors: Matrix = zeroMatrix(amount, amount)
 
     var currMatrix: Matrix = matrix
+    var isFirstIteration = true
     for (i in 0 until amount) {
         printMatrix("currMatrix", currMatrix)
-        val eigenvector: Vector = powerIteration(currMatrix)
-        val eigenvalue: Double = raleighQuotient(currMatrix, eigenvector)
 
-        eigenvectors[i] = eigenvector
-        eigenvalues[i] = eigenvalue
+        eigenvectors[i] =
+            if (isFirstIteration) {
+                isFirstIteration = false
+                powerIteration(currMatrix)
+            } else {
+                raleighQuotientEigenvector(currMatrix, eigenvalues[i - 1], eigenvectors[i - 1])
+            }
+        eigenvalues[i] = raleighQuotientEigenvalue(currMatrix, eigenvectors[i])
 
-        currMatrix = deflation(currMatrix, eigenvector, eigenvalue)
+        currMatrix = deflation(currMatrix, eigenvectors[i], eigenvalues[i])
     }
 
     return Pair(eigenvalues, eigenvectors)
@@ -235,12 +240,88 @@ fun scalarMultiply(scalar: Double, matrix: Matrix): Matrix {
     return matrix.map { it.map { it.times(scalar) }.toTypedArray() }.toTypedArray()
 }
 
+fun scalarDivide(scalar: Double, matrix: Matrix): Matrix {
+    return matrix.map { it.map { it.div(scalar) }.toTypedArray() }.toTypedArray()
+}
+
 fun scalarDivide(scalar: Double, v: Vector): Vector {
     return v.map { value -> value / scalar }.toTypedArray()
 }
 
-fun raleighQuotient(matrix: Matrix, eigenvector: Vector): Double {
-    val numerator: Double = dot(multiply(eigenvector, matrix), eigenvector)
+fun identity(amount: Int): Matrix {
+    return Array(amount) {
+        Array(amount) { if (it == amount) 1.0 else 0.0 }
+    }
+}
+
+fun adjoint(matrix: Matrix): Matrix {
+    val cofactorMatrix: Matrix = zeroMatrix(getWidth(matrix), getHeight(matrix))
+
+    for (row in 0 until getWidth(matrix)) {
+        for (col in 0 until getHeight(matrix)) {
+            cofactorMatrix[row][col] = determinant(subMatrix(matrix, row, col))
+        }
+    }
+
+    return transpose(cofactorMatrix)
+}
+
+fun subMatrix(matrix: Matrix, removeRow: Int, removeCol: Int): Matrix {
+    val subMatrix: Matrix = zeroMatrix(getWidth(matrix) - 1, getHeight(matrix) - 1)
+
+    var trueRow = 0
+    var trueCol = 0
+    for (row in 0 until getWidth(matrix)) {
+        if (row == removeRow) continue
+        for (col in 0 until getHeight(matrix)) {
+            if (col == removeCol) continue
+            subMatrix[trueRow][trueCol] = matrix[row][col]
+            ++trueCol
+        }
+        trueCol = 0
+        ++trueRow
+    }
+
+    return subMatrix
+}
+
+fun determinant(matrix: Matrix): Double {
+    if (getWidth(matrix) != getHeight(matrix)) {
+        throw RuntimeException("Non-square matrix cannot have a determinant!")
+    }
+
+    // base case
+    if (getWidth(matrix) == 2) {
+        return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]
+    }
+
+    val topRow: Vector = getRow(matrix, 0)
+    var accumulator = 0.0
+    var negativeSign = false
+    for (i in 0 until getWidth(matrix)) {
+        if (negativeSign) {
+            accumulator -= topRow[i] * determinant(subMatrix(matrix, 0, i))
+            negativeSign = false
+        } else {
+            accumulator += topRow[i] * determinant(subMatrix(matrix, 0, i))
+            negativeSign = true
+        }
+    }
+    return accumulator
+}
+
+fun inverse(matrix: Matrix): Matrix {
+    return scalarDivide(determinant(matrix), adjoint(matrix))
+}
+
+fun raleighQuotientEigenvector(matrix: Matrix, eigenvalue: Double, eigenvector: Vector): Vector {
+    val numerator: Vector = multiply(inverse(scalarMultiply(eigenvalue, identity(matrix.size))), eigenvector)
+    val denominator: Double = norm(numerator)
+    return scalarDivide(denominator, numerator)
+}
+
+fun raleighQuotientEigenvalue(matrix: Matrix, eigenvector: Vector): Double {
+    val numerator: Double = dot(eigenvector, multiply(matrix, eigenvector))
     val denominator: Double = dot(eigenvector, eigenvector)
     return numerator / denominator
 }
@@ -254,6 +335,8 @@ fun powerIteration(matrix: Matrix): Vector {
         numerator = multiply(matrix, b)
         denominator = norm(numerator)
         b = scalarDivide(denominator, numerator)
+
+        println("b: ${b.contentDeepToString()}")
     }
 
     return b
