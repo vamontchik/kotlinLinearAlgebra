@@ -25,6 +25,10 @@ class LinAlgTest {
         lateinit var dotVectorBase: Vector
         lateinit var dotVectorTwoBase: Vector
         var dotVectorResult: Double = 0.0 // dummy for compiler
+
+        lateinit var multiplyMatrix: Matrix
+        lateinit var multiplyVector: Vector
+        lateinit var multiplyMatrixVectorResult: Vector
     }
 
     private fun doubleComparison(value: Double, target: Double): Boolean {
@@ -155,6 +159,21 @@ class LinAlgTest {
         dotVectorResult = dotVectorBase.foldIndexed(0.0) {
             index, acc, _ -> acc.plus(dotVectorBase[index] * dotVectorTwoBase[index])
         }
+
+        //
+
+        multiplyMatrix = Array(5) {
+            Array(10) { it.toDouble() }
+        }
+
+        multiplyVector = Array(10) { it.toDouble() }
+
+        multiplyMatrixVectorResult = Array(5) { 0.0 }
+        for (i in 0 until multiplyMatrixVectorResult.size) {
+            multiplyMatrixVectorResult[i] = multiplyMatrix[i].mapIndexed {
+                index, _ -> multiplyMatrix[i][index] * multiplyVector[index]
+            }.sum()
+        }
     }
 
     @Test
@@ -191,6 +210,14 @@ class LinAlgTest {
     fun vectorDotTest() {
         println("vectorDotTest...")
         assertTrue { doubleComparison(dot(dotVectorBase, dotVectorTwoBase), dotVectorResult) }
+    }
+
+    @Test
+    fun matrixVectorMultiplyTest() {
+        println("matrixVectorMultiplyTest...")
+        val multiplied = multiply(multiplyMatrix, multiplyVector)
+        val result = multiplyMatrixVectorResult
+        vectorEquals(multiplied, result)
     }
 
     @Test
