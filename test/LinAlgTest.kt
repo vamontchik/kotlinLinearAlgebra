@@ -23,12 +23,12 @@ class LinAlgTest {
         lateinit var eigenvectorsResult: Matrix
     }
 
-    fun doubleComparison(value: Double, target: Double): Boolean {
+    private fun doubleComparison(value: Double, target: Double): Boolean {
         val tolerance = 0.0001
         return (abs(value) - target < tolerance)
     }
 
-    fun matrixEquals(first: Matrix, second: Matrix) {
+    private fun matrixEquals(first: Matrix, second: Matrix) {
         for (row in 0 until getHeight(first)) {
             for (col in 0 until getWidth(first)) {
                 val firstDouble: Double = first[row][col]
@@ -37,6 +37,47 @@ class LinAlgTest {
                 println("first matrix at ($row, $col): $firstDouble, second matrix at ($row, $col): $secondDouble")
 
                 assertTrue { doubleComparison(firstDouble, secondDouble) }
+            }
+        }
+    }
+
+    private fun vectorEquals(first: Vector, second: Vector) {
+        for (i in 0 until first.size) {
+            val firstDouble: Double = first[i]
+            val secondDouble: Double = second[i]
+
+            println("first vector at $i: $firstDouble, second vector at $i: $secondDouble")
+
+            assertTrue { doubleComparison(firstDouble, secondDouble) }
+        }
+    }
+
+    private fun vectorToAllMatrixRowsEquals(m: Matrix) {
+        for (row in 0 until getHeight(m)) {
+            val v: Vector = getRow(m, row)
+
+            for (col in 0 until getWidth(m)) {
+                val firstDouble: Double = m[row][col]
+                val secondDouble: Double = v[col]
+
+                println("matrix at ($row, $col): $firstDouble, vector at $col: $secondDouble")
+
+                assertTrue { doubleComparison(firstDouble, secondDouble) }
+            }
+        }
+    }
+
+    private fun vectorToAllMatrixColumnsEquals(m: Matrix) {
+        for (col in 0 until getWidth(m)) {
+            val v: Vector = getCol(m, col)
+
+            for (row in 0 until getHeight(m)) {
+                val firstDouble: Double = v[row]
+                val secondDouble: Double = m[row][col]
+
+                println("matrix at ($row, $col): $firstDouble, vector at $row: $secondDouble")
+
+                assertTrue { doubleComparison(v[row], basicBase[row][col]) }
             }
         }
     }
@@ -105,37 +146,13 @@ class LinAlgTest {
     @Test
     fun rowAndWidthTest() {
         println("rowAndWidthTest...")
-
-        for (row in 0 until getHeight(basicBase)) {
-            val v: Vector = getRow(basicBase, row)
-
-            for (col in 0 until getWidth(basicBase)) {
-                val firstDouble: Double = v[col]
-                val secondDouble: Double = basicBase[row][col]
-
-                println("matrix at ($row, $col): $firstDouble, vector at $row: $secondDouble")
-
-                assertTrue { doubleComparison(v[col], basicBase[row][col]) }
-            }
-        }
+        vectorToAllMatrixRowsEquals(basicBase)
     }
 
     @Test
     fun colAndHeightTest() {
         println("colAndHeightTest...")
-
-        for (col in 0 until getWidth(basicBase)) {
-            val v: Vector = getCol(basicBase, col)
-
-            for (row in 0 until getHeight(basicBase)) {
-                val firstDouble: Double = v[row]
-                val secondDouble: Double = basicBase[row][col]
-
-                println("matrix at ($row, $col): $firstDouble, vector at $row: $secondDouble")
-
-                assertTrue { doubleComparison(v[row], basicBase[row][col]) }
-            }
-        }
+        vectorToAllMatrixColumnsEquals(basicBase)
     }
 
     @Test
@@ -156,27 +173,11 @@ class LinAlgTest {
         matrixEquals(transpose(transposeBase), transposeResult)
     }
 
-    
     @Test
     fun eigenTest() {
         println("eigenTest...")
-
         val (eigenvalues, eigenvectors) = eigen(basicBase)
-
-        println("eigenvalues: " + eigenvalues.contentDeepToString())
-        printMatrix("eigenvectors", eigenvectors)
-
-        for (row in 0 until getHeight(eigenvectors)) {
-            assertTrue { doubleComparison(eigenvalues[row], eigenvaluesResult[row]) }
-            
-            for (col in 0 until getWidth(eigenvectors)) {
-                val firstDouble: Double = eigenvectors[row][col]
-                val secondDouble: Double = eigenvectorsResult[row][col]
-
-                println("first matrix at ($row, $col): $firstDouble, second matrix at ($row, $col): $secondDouble")
-
-                assertTrue { doubleComparison(firstDouble, secondDouble) }
-            }
-        }
+        vectorEquals(eigenvalues, eigenvaluesResult)
+        matrixEquals(eigenvectors, eigenvectorsResult)
     }
 }
