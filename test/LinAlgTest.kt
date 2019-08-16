@@ -21,6 +21,10 @@ class LinAlgTest {
 
         lateinit var eigenvaluesResult: Vector
         lateinit var eigenvectorsResult: Matrix
+
+        lateinit var dotVectorBase: Vector
+        lateinit var dotVectorTwoBase: Vector
+        var dotVectorResult: Double = 0.0 // dummy for compiler
     }
 
     private fun doubleComparison(value: Double, target: Double): Boolean {
@@ -141,6 +145,16 @@ class LinAlgTest {
             arrayOf(-1.0, 0.0, 1.0),
             arrayOf(1.0, -2.0, 1.0)
         )
+
+        //
+
+        dotVectorBase = arrayOf(1.0, 2.0, 3.0, 4.0)
+
+        dotVectorTwoBase = arrayOf(5.0, 6.0, 7.0, 8.0)
+
+        dotVectorResult = dotVectorBase.foldIndexed(0.0) {
+            index, acc, _ -> acc.plus(dotVectorBase[index] * dotVectorTwoBase[index])
+        }
     }
 
     @Test
@@ -156,6 +170,12 @@ class LinAlgTest {
     }
 
     @Test
+    fun matrixTransposeTest() {
+        println("matrixTransposeTest...")
+        matrixEquals(transpose(transposeBase), transposeResult)
+    }
+
+    @Test
     fun matrixAddTest() {
         println("matrixAddTest...")
         matrixEquals(add(addBase, toAdd), addResult)
@@ -168,9 +188,9 @@ class LinAlgTest {
     }
 
     @Test
-    fun matrixTransposeTest() {
-        println("matrixTransposeTest...")
-        matrixEquals(transpose(transposeBase), transposeResult)
+    fun vectorDotTest() {
+        println("vectorDotTest...")
+        assertTrue { doubleComparison(dot(dotVectorBase, dotVectorTwoBase), dotVectorResult) }
     }
 
     @Test
