@@ -6,7 +6,7 @@ import kotlin.test.assertTrue
 
 class LinAlgTest {
     companion object {
-        lateinit var m: Matrix
+        lateinit var basicBase: Matrix
 
         lateinit var addBase: Matrix
         lateinit var toAdd: Matrix
@@ -15,11 +15,14 @@ class LinAlgTest {
         lateinit var subtractBase: Matrix
         lateinit var toSubtract: Matrix
         lateinit var subtractResult: Matrix
+
+        lateinit var transposeBase: Matrix
+        lateinit var transposeResult: Matrix
     }
 
     @BeforeTest
     fun setup() {
-        m = arrayOf(
+        basicBase = arrayOf(
             arrayOf(7.0, 4.0, 1.0),
             arrayOf(4.0, 4.0, 4.0),
             arrayOf(1.0, 4.0, 7.0)
@@ -54,6 +57,18 @@ class LinAlgTest {
         }
 
         //
+
+        transposeBase = arrayOf(
+            arrayOf(1.0, 2.0, 3.0),
+            arrayOf(4.0, 5.0, 6.0),
+            arrayOf(7.0, 8.0, 9.0)
+        )
+
+        transposeResult = arrayOf(
+            arrayOf(1.0, 4.0, 7.0),
+            arrayOf(2.0, 5.0, 8.0),
+            arrayOf(3.0, 6.0, 9.0)
+        )
     }
 
     private fun doubleComparison(value: Double, target: Double): Boolean {
@@ -65,16 +80,16 @@ class LinAlgTest {
     fun rowAndWidthTest() {
         println("rowAndWidthTest...")
 
-        for (row in 0 until getHeight(m)) {
-            val v: Vector = getRow(m, row)
+        for (row in 0 until getHeight(basicBase)) {
+            val v: Vector = getRow(basicBase, row)
 
-            for (col in 0 until getWidth(m)) {
+            for (col in 0 until getWidth(basicBase)) {
                 val firstDouble: Double = v[col]
-                val secondDouble: Double = m[row][col]
+                val secondDouble: Double = basicBase[row][col]
 
                 println("matrix at ($row, $col): $firstDouble, vector at $row: $secondDouble")
 
-                assertTrue { doubleComparison(v[col], m[row][col]) }
+                assertTrue { doubleComparison(v[col], basicBase[row][col]) }
             }
         }
     }
@@ -83,16 +98,16 @@ class LinAlgTest {
     fun colAndHeightTest() {
         println("colAndHeightTest...")
 
-        for (col in 0 until getWidth(m)) {
-            val v: Vector = getCol(m, col)
+        for (col in 0 until getWidth(basicBase)) {
+            val v: Vector = getCol(basicBase, col)
 
-            for (row in 0 until getHeight(m)) {
+            for (row in 0 until getHeight(basicBase)) {
                 val firstDouble: Double = v[row]
-                val secondDouble: Double = m[row][col]
+                val secondDouble: Double = basicBase[row][col]
 
                 println("matrix at ($row, $col): $firstDouble, vector at $row: $secondDouble")
 
-                assertTrue { doubleComparison(v[row], m[row][col]) }
+                assertTrue { doubleComparison(v[row], basicBase[row][col]) }
             }
         }
     }
@@ -132,6 +147,24 @@ class LinAlgTest {
         }
     }
 
+    @Test
+    fun matrixTransposeTest() {
+        println("matrixTransposeTest...")
+
+        val tempRes: Matrix = transpose(transposeBase)
+
+        for (row in 0 until getHeight(transposeResult)) {
+            for (col in 0 until getWidth(transposeResult)) {
+                val firstDouble: Double = transposeResult[row][col]
+                val secondDouble: Double = tempRes[row][col]
+
+                println("first matrix at ($row, $col): $firstDouble, second matrix at ($row, $col): $secondDouble")
+
+                assertTrue { doubleComparison(firstDouble, secondDouble) }
+            }
+        }
+    }
+
 //    @Test
 //    fun eigenTest() {
 //        val m: Matrix = arrayOf(
@@ -140,7 +173,7 @@ class LinAlgTest {
 //            arrayOf(1.0, 4.0, 7.0)
 //        )
 //
-//        val (eigenvalues, eigenvectors) = eigen(m)
+//        val (eigenvalues, eigenvectors) = eigen(basicBase)
 //
 //        println("eigenvalues: " + eigenvalues.contentDeepToString())
 //        printMatrix("eigenvectors", eigenvectors)
