@@ -167,19 +167,27 @@ class LinAlgTest {
 
 //    @Test
 //    fun eigenTest() {
-//        val m: Matrix = arrayOf(
-//            arrayOf(7.0, 4.0, 1.0),
-//            arrayOf(4.0, 4.0, 4.0),
-//            arrayOf(1.0, 4.0, 7.0)
-//        )
-//
 //        val (eigenvalues, eigenvectors) = eigen(basicBase)
 //
 //        println("eigenvalues: " + eigenvalues.contentDeepToString())
 //        printMatrix("eigenvectors", eigenvectors)
 //
-//        assertTrue { abs(eigenvalues[0] - 12.0) < 0.0001 }
-//        assertTrue { abs(eigenvalues[1] - 6.0) < 0.0001 }
-//        assertTrue { abs(eigenvalues[2]) < 0.001 }
+//        val tolerance: Double = 0.0001
+//
+//        assertTrue { abs(eigenvalues[0] - 12.0) < tolerance }
+//        assertTrue { abs(eigenvectors[0][0] - 1.0) < tolerance }
+//        assertTrue { abs(eigenvectors[0][1] - 1.0) < tolerance }
+//        assertTrue { abs(eigenvectors[0][2] - 1.0) < tolerance }
+//
+//        assertTrue { abs(eigenvalues[1] - 6.0) < tolerance }
+//        assertTrue { abs(eigenvectors[1][0] + 1.0) < tolerance }
+//        assertTrue { abs(eigenvectors[1][1]) < tolerance }
+//        assertTrue { abs(eigenvectors[1][2] - 1.0) < tolerance }
+//
+//        assertTrue { abs(eigenvalues[2]) < tolerance }
+//        assertTrue { abs(eigenvectors[2][0] - 1.0) < tolerance }
+//        assertTrue { abs(eigenvectors[2][1] + 2.0) < tolerance }
+//        assertTrue { abs(eigenvectors[2][2] - 1.0) < tolerance }
+//
 //    }
 }
