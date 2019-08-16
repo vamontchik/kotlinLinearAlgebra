@@ -181,7 +181,7 @@ fun multiply(first: Vector, second: Vector): Matrix {
     return result
 }
 
-fun norm(v: Vector): Double {
+fun norm2(v: Vector): Double {
     val acc: Double = v.reduce { acc, value -> acc.plus(value.pow(2)) }
     return sqrt(acc)
 }
@@ -229,7 +229,7 @@ fun zeroMatrix(width: Int, height: Int): Matrix {
 
 fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
     val rightHandMatrix: Matrix = scalarMultiply(
-        eigenvalue / norm(eigenvector),
+        eigenvalue / norm2(eigenvector),
         multiply(eigenvector, eigenvector)
     )
 
@@ -316,7 +316,7 @@ fun inverse(matrix: Matrix): Matrix {
 
 fun raleighQuotientEigenvector(matrix: Matrix, eigenvalue: Double, eigenvector: Vector): Vector {
     val numerator: Vector = multiply(inverse(scalarMultiply(eigenvalue, identity(matrix.size))), eigenvector)
-    val denominator: Double = norm(numerator)
+    val denominator: Double = norm2(numerator)
     return scalarDivide(denominator, numerator)
 }
 
@@ -333,7 +333,7 @@ fun powerIteration(matrix: Matrix): Vector {
 
     for (i in 0 until 50) {
         numerator = multiply(matrix, b)
-        denominator = norm(numerator)
+        denominator = norm2(numerator)
         b = scalarDivide(denominator, numerator)
 
         println("b: ${b.contentDeepToString()}")
