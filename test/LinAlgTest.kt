@@ -23,6 +23,24 @@ class LinAlgTest {
         lateinit var eigenvectorsResult: Matrix
     }
 
+    fun doubleComparison(value: Double, target: Double): Boolean {
+        val tolerance = 0.0001
+        return (abs(value) - target < tolerance)
+    }
+
+    fun matrixEquals(first: Matrix, second: Matrix) {
+        for (row in 0 until getHeight(first)) {
+            for (col in 0 until getWidth(first)) {
+                val firstDouble: Double = first[row][col]
+                val secondDouble: Double = second[row][col]
+
+                println("first matrix at ($row, $col): $firstDouble, second matrix at ($row, $col): $secondDouble")
+
+                assertTrue { doubleComparison(firstDouble, secondDouble) }
+            }
+        }
+    }
+
     @BeforeTest
     fun setup() {
         basicBase = arrayOf(
@@ -84,11 +102,6 @@ class LinAlgTest {
         )
     }
 
-    private fun doubleComparison(value: Double, target: Double): Boolean {
-        val tolerance = 0.0001
-        return (abs(value) - target < tolerance)
-    }
-
     @Test
     fun rowAndWidthTest() {
         println("rowAndWidthTest...")
@@ -128,54 +141,19 @@ class LinAlgTest {
     @Test
     fun matrixAddTest() {
         println("matrixAddTest...")
-        val tempRes: Matrix = add(addBase, toAdd)
-
-        for (row in 0 until getHeight(addResult)) {
-            for (col in 0 until getWidth(addResult)) {
-                val firstDouble: Double = addResult[row][col]
-                val secondDouble: Double = tempRes[row][col]
-
-                println("first matrix at ($row, $col): $firstDouble, second matrix at ($row, $col): $secondDouble")
-
-                assertTrue { doubleComparison(firstDouble, secondDouble) }
-            }
-        }
+        matrixEquals(add(addBase, toAdd), addResult)
     }
 
     @Test
     fun matrixSubtractTest() {
         println("matrixSubtractTest...")
-
-        val tempRes: Matrix = subtract(subtractBase, toSubtract)
-
-        for (row in 0 until getHeight(subtractResult)) {
-            for (col in 0 until getWidth(subtractResult)) {
-                val firstDouble: Double = subtractResult[row][col]
-                val secondDouble: Double = tempRes[row][col]
-
-                println("first matrix at ($row, $col): $firstDouble, second matrix at ($row, $col): $secondDouble")
-
-                assertTrue { doubleComparison(firstDouble, secondDouble) }
-            }
-        }
+        matrixEquals(subtract(subtractBase, toSubtract), subtractResult)
     }
 
     @Test
     fun matrixTransposeTest() {
         println("matrixTransposeTest...")
-
-        val tempRes: Matrix = transpose(transposeBase)
-
-        for (row in 0 until getHeight(transposeResult)) {
-            for (col in 0 until getWidth(transposeResult)) {
-                val firstDouble: Double = transposeResult[row][col]
-                val secondDouble: Double = tempRes[row][col]
-
-                println("first matrix at ($row, $col): $firstDouble, second matrix at ($row, $col): $secondDouble")
-
-                assertTrue { doubleComparison(firstDouble, secondDouble) }
-            }
-        }
+        matrixEquals(transpose(transposeBase), transposeResult)
     }
 
     
