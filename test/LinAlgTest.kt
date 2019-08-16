@@ -18,6 +18,9 @@ class LinAlgTest {
 
         lateinit var transposeBase: Matrix
         lateinit var transposeResult: Matrix
+
+        lateinit var eigenvaluesResult: Vector
+        lateinit var eigenvectorsResult: Matrix
     }
 
     @BeforeTest
@@ -68,6 +71,16 @@ class LinAlgTest {
             arrayOf(1.0, 4.0, 7.0),
             arrayOf(2.0, 5.0, 8.0),
             arrayOf(3.0, 6.0, 9.0)
+        )
+
+        //
+
+        eigenvaluesResult = arrayOf(12.0, 6.0, 0.0)
+        
+        eigenvectorsResult = arrayOf(
+            arrayOf(1.0, 1.0, 1.0),
+            arrayOf(-1.0, 0.0, 1.0),
+            arrayOf(1.0, -2.0, 1.0)
         )
     }
 
@@ -165,29 +178,27 @@ class LinAlgTest {
         }
     }
 
-//    @Test
-//    fun eigenTest() {
-//        val (eigenvalues, eigenvectors) = eigen(basicBase)
-//
-//        println("eigenvalues: " + eigenvalues.contentDeepToString())
-//        printMatrix("eigenvectors", eigenvectors)
-//
-//        val tolerance: Double = 0.0001
-//
-//        assertTrue { abs(eigenvalues[0] - 12.0) < tolerance }
-//        assertTrue { abs(eigenvectors[0][0] - 1.0) < tolerance }
-//        assertTrue { abs(eigenvectors[0][1] - 1.0) < tolerance }
-//        assertTrue { abs(eigenvectors[0][2] - 1.0) < tolerance }
-//
-//        assertTrue { abs(eigenvalues[1] - 6.0) < tolerance }
-//        assertTrue { abs(eigenvectors[1][0] + 1.0) < tolerance }
-//        assertTrue { abs(eigenvectors[1][1]) < tolerance }
-//        assertTrue { abs(eigenvectors[1][2] - 1.0) < tolerance }
-//
-//        assertTrue { abs(eigenvalues[2]) < tolerance }
-//        assertTrue { abs(eigenvectors[2][0] - 1.0) < tolerance }
-//        assertTrue { abs(eigenvectors[2][1] + 2.0) < tolerance }
-//        assertTrue { abs(eigenvectors[2][2] - 1.0) < tolerance }
-//
-//    }
+    
+    @Test
+    fun eigenTest() {
+        println("eigenTest...")
+
+        val (eigenvalues, eigenvectors) = eigen(basicBase)
+
+        println("eigenvalues: " + eigenvalues.contentDeepToString())
+        printMatrix("eigenvectors", eigenvectors)
+
+        for (row in 0 until getHeight(eigenvectors)) {
+            assertTrue { doubleComparison(eigenvalues[row], eigenvaluesResult[row]) }
+            
+            for (col in 0 until getWidth(eigenvectors)) {
+                val firstDouble: Double = eigenvectors[row][col]
+                val secondDouble: Double = eigenvectorsResult[row][col]
+
+                println("first matrix at ($row, $col): $firstDouble, second matrix at ($row, $col): $secondDouble")
+
+                assertTrue { doubleComparison(firstDouble, secondDouble) }
+            }
+        }
+    }
 }
