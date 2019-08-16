@@ -249,9 +249,11 @@ fun scalarDivide(scalar: Double, v: Vector): Vector {
 }
 
 fun identity(amount: Int): Matrix {
-    return Array(amount) {
-        Array(amount) { if (it == amount) 1.0 else 0.0 }
+    val matrix: Matrix = zeroMatrix(amount, amount)
+    for (i in 0 until amount) {
+        matrix[i][i] = 1.0
     }
+    return matrix
 }
 
 fun adjoint(matrix: Matrix): Matrix {
@@ -315,14 +317,23 @@ fun inverse(matrix: Matrix): Matrix {
 }
 
 fun raleighQuotientEigenvector(matrix: Matrix, eigenvalue: Double, eigenvector: Vector): Vector {
-    val numerator: Vector = multiply(inverse(scalarMultiply(eigenvalue, identity(matrix.size))), eigenvector)
+    val identity: Matrix = identity(getWidth(matrix))
+    val scalarMultRes: Matrix = scalarMultiply(eigenvalue, identity)
+    val inverse: Matrix = inverse(scalarMultRes)
+    val numerator: Vector = multiply(inverse, eigenvector)
     val denominator: Double = norm2(numerator)
+    println("For raleighQuotientEigenvector calc...")
+    println("numerator: ${numerator.contentDeepToString()}")
+    println("denominator: $denominator")
     return scalarDivide(denominator, numerator)
 }
 
 fun raleighQuotientEigenvalue(matrix: Matrix, eigenvector: Vector): Double {
     val numerator: Double = dot(eigenvector, multiply(matrix, eigenvector))
     val denominator: Double = dot(eigenvector, eigenvector)
+    println("For raleighQuotientEigenvalue calc...")
+    println("numerator: $numerator")
+    println("denominator: $denominator")
     return numerator / denominator
 }
 
@@ -331,12 +342,13 @@ fun powerIteration(matrix: Matrix): Vector {
     var numerator: Vector
     var denominator: Double
 
+    println("For powerIteration calc...")
     for (i in 0 until 50) {
         numerator = multiply(matrix, b)
         denominator = norm2(numerator)
         b = scalarDivide(denominator, numerator)
 
-        println("b: ${b.contentDeepToString()}")
+        println("b at $i: ${b.contentDeepToString()}")
     }
 
     return b
@@ -352,7 +364,7 @@ fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
     printMatrix("product", product)
 
     val (eigenvalues, eigenvectors) = eigen(product)
-    println("eigenvalues: " + eigenvalues.contentDeepToString())
+    println("eigenvalues: ${eigenvalues.contentDeepToString()}")
     printMatrix("eigenvectors", eigenvectors)
 
     // TODO: finish svd calculation...
