@@ -186,6 +186,7 @@ fun norm2(v: Vector): Double {
     return sqrt(acc)
 }
 
+// TODO: Fix this, since it doesn't produce the correct values...
 fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
      val amount: Int =
         if (getWidth(matrix) < getHeight(matrix)) {
