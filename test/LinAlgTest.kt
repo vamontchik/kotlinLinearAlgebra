@@ -1,36 +1,9 @@
 import math.*
 import kotlin.math.abs
-import kotlin.test.BeforeTest
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
 class LinAlgTest {
-    companion object {
-        lateinit var basicBase: Matrix
-
-        lateinit var addBase: Matrix
-        lateinit var toAdd: Matrix
-        lateinit var addResult: Matrix
-
-        lateinit var subtractBase: Matrix
-        lateinit var toSubtract: Matrix
-        lateinit var subtractResult: Matrix
-
-        lateinit var transposeBase: Matrix
-        lateinit var transposeResult: Matrix
-
-        lateinit var eigenvaluesResult: Vector
-        lateinit var eigenvectorsResult: Matrix
-
-        lateinit var dotVectorBase: Vector
-        lateinit var dotVectorTwoBase: Vector
-        var dotVectorResult: Double = 0.0 // dummy for compiler
-
-        lateinit var multiplyMatrix: Matrix
-        lateinit var multiplyVector: Vector
-        lateinit var multiplyMatrixVectorResult: Vector
-    }
-
     private fun doubleComparison(value: Double, target: Double): Boolean {
         val tolerance = 0.0001
         return (abs(value) - target < tolerance)
@@ -85,146 +58,114 @@ class LinAlgTest {
 
                 println("matrix at ($row, $col): $firstDouble, vector at $row: $secondDouble")
 
-                assertTrue { doubleComparison(v[row], basicBase[row][col]) }
+                assertTrue { doubleComparison(firstDouble, secondDouble) }
             }
-        }
-    }
-
-    @BeforeTest
-    fun setup() {
-        basicBase = arrayOf(
-            arrayOf(7.0, 4.0, 1.0),
-            arrayOf(4.0, 4.0, 4.0),
-            arrayOf(1.0, 4.0, 7.0)
-        )
-
-        //
-
-        addBase = arrayOf(
-            arrayOf(1.0, 2.0, 3.0),
-            arrayOf(4.0, 5.0, 6.0),
-            arrayOf(7.0, 8.0, 9.0)
-        )
-
-        toAdd = arrayOf(
-            arrayOf(1.0, 1.0, 1.0),
-            arrayOf(1.0, 1.0, 1.0),
-            arrayOf(1.0, 1.0, 1.0)
-        )
-
-        addResult = Array(addBase.size) {
-            Array(addBase[0].size) { it2 -> addBase[it][it2] + toAdd[it][it2] }
-        }
-
-        //
-
-        subtractBase = addBase
-
-        toSubtract = toAdd
-
-        subtractResult = Array(subtractBase.size) {
-            Array(subtractBase[0].size) { it2 -> subtractBase[it][it2] - toSubtract[it][it2] }
-        }
-
-        //
-
-        transposeBase = arrayOf(
-            arrayOf(1.0, 2.0, 3.0),
-            arrayOf(4.0, 5.0, 6.0),
-            arrayOf(7.0, 8.0, 9.0)
-        )
-
-        transposeResult = arrayOf(
-            arrayOf(1.0, 4.0, 7.0),
-            arrayOf(2.0, 5.0, 8.0),
-            arrayOf(3.0, 6.0, 9.0)
-        )
-
-        //
-
-        eigenvaluesResult = arrayOf(12.0, 6.0, 0.0)
-        
-        eigenvectorsResult = arrayOf(
-            arrayOf(1.0, 1.0, 1.0),
-            arrayOf(-1.0, 0.0, 1.0),
-            arrayOf(1.0, -2.0, 1.0)
-        )
-
-        //
-
-        dotVectorBase = arrayOf(1.0, 2.0, 3.0, 4.0)
-
-        dotVectorTwoBase = arrayOf(5.0, 6.0, 7.0, 8.0)
-
-        dotVectorResult = dotVectorBase.foldIndexed(0.0) {
-            index, acc, _ -> acc.plus(dotVectorBase[index] * dotVectorTwoBase[index])
-        }
-
-        //
-
-        multiplyMatrix = Array(5) {
-            Array(10) { it.toDouble() }
-        }
-
-        multiplyVector = Array(10) { it.toDouble() }
-
-        multiplyMatrixVectorResult = Array(5) { 0.0 }
-        for (i in 0 until multiplyMatrixVectorResult.size) {
-            multiplyMatrixVectorResult[i] = multiplyMatrix[i].mapIndexed {
-                index, _ -> multiplyMatrix[i][index] * multiplyVector[index]
-            }.sum()
         }
     }
 
     @Test
     fun rowAndWidthTest() {
-        println("rowAndWidthTest...")
-        vectorToAllMatrixRowsEquals(basicBase)
+        val m: Matrix = arrayOf(
+            arrayOf(7.0, 4.0, 1.0),
+            arrayOf(4.0, 4.0, 4.0),
+            arrayOf(1.0, 4.0, 7.0)
+        )
+        vectorToAllMatrixRowsEquals(m)
     }
 
     @Test
     fun colAndHeightTest() {
-        println("colAndHeightTest...")
-        vectorToAllMatrixColumnsEquals(basicBase)
+        val m: Matrix = arrayOf(
+            arrayOf(7.0, 4.0, 1.0),
+            arrayOf(4.0, 4.0, 4.0),
+            arrayOf(1.0, 4.0, 7.0)
+        )
+        vectorToAllMatrixColumnsEquals(m)
     }
 
     @Test
     fun matrixTransposeTest() {
-        println("matrixTransposeTest...")
-        matrixEquals(transpose(transposeBase), transposeResult)
+        val transposeBase: Matrix = arrayOf(
+            arrayOf(1.0, 2.0, 3.0),
+            arrayOf(4.0, 5.0, 6.0),
+            arrayOf(7.0, 8.0, 9.0)
+        )
+        val result: Matrix = arrayOf(
+            arrayOf(1.0, 4.0, 7.0),
+            arrayOf(2.0, 5.0, 8.0),
+            arrayOf(3.0, 6.0, 9.0)
+        )
+        matrixEquals(transpose(transposeBase), result)
     }
 
     @Test
     fun matrixAddTest() {
-        println("matrixAddTest...")
-        matrixEquals(add(addBase, toAdd), addResult)
+        val addBase: Matrix = arrayOf(
+            arrayOf(1.0, 2.0, 3.0),
+            arrayOf(4.0, 5.0, 6.0),
+            arrayOf(7.0, 8.0, 9.0)
+        )
+        val toAdd: Matrix = arrayOf(
+            arrayOf(1.0, 1.0, 1.0),
+            arrayOf(1.0, 1.0, 1.0),
+            arrayOf(1.0, 1.0, 1.0)
+        )
+        val result: Matrix = arrayOf(
+            arrayOf(2.0, 3.0, 4.0),
+            arrayOf(5.0, 6.0, 7.0),
+            arrayOf(8.0, 9.0, 10.0)
+        )
+        matrixEquals(add(addBase, toAdd), result)
     }
 
     @Test
     fun matrixSubtractTest() {
-        println("matrixSubtractTest...")
-        matrixEquals(subtract(subtractBase, toSubtract), subtractResult)
+        val subtractBase: Matrix = arrayOf(
+            arrayOf(1.0, 2.0, 3.0),
+            arrayOf(4.0, 5.0, 6.0),
+            arrayOf(7.0, 8.0, 9.0)
+        )
+        val toSubtract: Matrix = arrayOf(
+            arrayOf(1.0, 1.0, 1.0),
+            arrayOf(1.0, 1.0, 1.0),
+            arrayOf(1.0, 1.0, 1.0)
+        )
+        val result = arrayOf(
+            arrayOf(0.0, 1.0, 2.0),
+            arrayOf(3.0, 4.0, 5.0),
+            arrayOf(6.0, 8.0, 9.0)
+        )
+        matrixEquals(subtract(subtractBase, toSubtract), result)
     }
 
     @Test
     fun vectorDotTest() {
-        println("vectorDotTest...")
-        assertTrue { doubleComparison(dot(dotVectorBase, dotVectorTwoBase), dotVectorResult) }
+        val vectorOne: Vector = arrayOf(1.0, 2.0, 3.0, 4.0)
+        val vectorTwo: Vector = arrayOf(5.0, 6.0, 7.0, 8.0)
+        val result = 70.0
+        assertTrue { doubleComparison(dot(vectorOne, vectorTwo), result) }
     }
 
     @Test
     fun matrixVectorMultiplyTest() {
-        println("matrixVectorMultiplyTest...")
-        val multiplied = multiply(multiplyMatrix, multiplyVector)
-        val result = multiplyMatrixVectorResult
+        val matrix: Matrix = arrayOf(
+            arrayOf(1.0, 2.0, 3.0, 4.0, 5.0),
+            arrayOf(6.0, 7.0, 8.0, 9.0, 10.0),
+            arrayOf(11.0, 12.0, 13.0, 14.0, 15.0)
+        )
+        val vector: Vector = arrayOf(
+            16.0, 17.0, 18.0, 19.0, 20.0
+        )
+        val result: Vector = arrayOf(280.0, 730.0, 1180.0)
+        val multiplied = multiply(matrix, vector)
         vectorEquals(multiplied, result)
     }
 
-    @Test
-    fun eigenTest() {
-        println("eigenTest...")
-        val (eigenvalues, eigenvectors) = eigen(basicBase)
-        vectorEquals(eigenvalues, eigenvaluesResult)
-        matrixEquals(eigenvectors, eigenvectorsResult)
-    }
+//    @Test
+//    fun eigenTest() {
+//        println("eigenTest...")
+//        val (eigenvalues, eigenvectors) = eigen(basicBase)
+//        vectorEquals(eigenvalues, eigenvaluesResult)
+//        matrixEquals(eigenvectors, eigenvectorsResult)
+//    }
 }
