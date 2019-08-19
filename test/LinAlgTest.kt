@@ -147,6 +147,27 @@ class LinAlgTest {
     }
 
     @Test
+    fun matrixMatrixMultiplyTest() {
+        val matrixOne: Matrix = arrayOf(
+            arrayOf(1.0, 2.0, 3.0, 4.0, 5.0),
+            arrayOf(6.0, 7.0, 8.0, 9.0, 10.0)
+        )
+        val matrixTwo: Matrix = arrayOf(
+            arrayOf(11.0, 12.0),
+            arrayOf(13.0, 14.0),
+            arrayOf(15.0, 16.0),
+            arrayOf(17.0, 18.0),
+            arrayOf(19.0, 20.0)
+        )
+        val result: Matrix = arrayOf(
+            arrayOf(245.0, 260.0),
+            arrayOf(620.0, 660.0)
+        )
+        val multiplied = multiply(matrixOne, matrixTwo)
+        matrixEquals(result, multiplied)
+    }
+
+    @Test
     fun matrixVectorMultiplyTest() {
         val matrix: Matrix = arrayOf(
             arrayOf(1.0, 2.0, 3.0, 4.0, 5.0),
@@ -159,6 +180,42 @@ class LinAlgTest {
         val result: Vector = arrayOf(280.0, 730.0, 1180.0)
         val multiplied = multiply(matrix, vector)
         vectorEquals(multiplied, result)
+    }
+
+    @Test
+    fun vectorMatrixMultiplyTest() {
+        val matrix: Matrix = arrayOf(
+            arrayOf(1.0, 2.0, 3.0),
+            arrayOf(4.0, 5.0, 6.0),
+            arrayOf(7.0, 8.0, 9.0),
+            arrayOf(10.0, 11.0, 12.0),
+            arrayOf(13.0, 14.0, 15.0)
+        )
+        val vector: Vector = arrayOf(
+            16.0, 17.0, 18.0, 19.0, 20.0
+        )
+        val result: Vector = arrayOf(660.0, 750.0, 840.0)
+        val multiplied: Vector = multiply(vector, matrix)
+        vectorEquals(multiplied, result)
+    }
+
+    @Test
+    fun vectorVectorMultiplyTest() {
+        val vectorOne: Vector = arrayOf(
+            11.0, 12.0, 13.0, 14.0, 15.0
+        )
+        val vectorTwo: Vector = arrayOf(
+            21.0, 22.0, 23.0, 24.0, 25.0
+        )
+        val result: Matrix = arrayOf(
+            arrayOf(231.0, 242.0, 253.0, 264.0, 275.0),
+            arrayOf(252.0, 264.0, 276.0, 288.0, 300.0),
+            arrayOf(273.0, 286.0, 299.0, 312.0, 325.0),
+            arrayOf(294.0, 308.0, 322.0, 336.0, 350.0),
+            arrayOf(315.0, 330.0, 345.0, 360.0, 375.0)
+        )
+        val multiplied: Matrix = multiply(vectorOne, vectorTwo)
+        matrixEquals(multiplied, result)
     }
 
 //    @Test

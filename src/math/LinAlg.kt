@@ -39,16 +39,10 @@ fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
 }
 
 fun getRow(matrix: Matrix, index: Int): Vector {
-//    if (index < 0 || index >= getHeight(matrix)) {
-//        throw RuntimeException("Index is invalid! index: $index, num rows: " + getHeight(matrix))
-//    }
     return matrix[index]
 }
 
 fun getCol(matrix: Matrix, index: Int): Vector {
-//    if (index < 0 || index >= getWidth(matrix)) {
-//        throw RuntimeException("Index is invalid! index: $index, num columns: " + getWidth(matrix))
-//    }
     return matrix.map { it[index] }.toTypedArray()
 }
 
@@ -82,36 +76,18 @@ fun transpose(matrix: Matrix): Matrix {
 }
 
 fun add(first: Matrix, second: Matrix): Matrix {
-    val result: Matrix = zeroMatrix(getWidth(first), getHeight(first))
-
-    for (row in 0 until getHeight(result)) {
-        for (col in 0 until getWidth(result)) {
-            result[row][col] = first[row][col] + second[row][col]
-        }
-    }
-
-    return result
+    return first.mapIndexed { rowIndex, row ->
+        row.mapIndexed { colIndex, value -> value + second[rowIndex][colIndex] }.toTypedArray()
+    }.toTypedArray()
 }
 
 fun subtract(first: Matrix, second: Matrix): Matrix {
-    val result: Matrix = zeroMatrix(getWidth(first), getHeight(first))
-
-    for (row in 0 until getHeight(result)) {
-        for (col in 0 until getWidth(result)) {
-            result[row][col] = first[row][col] - second[row][col]
-        }
-    }
-
-    return result
+    return first.mapIndexed { rowIndex, row ->
+        row.mapIndexed { colIndex, value -> value - second[rowIndex][colIndex] }.toTypedArray()
+    }.toTypedArray()
 }
 
 fun dot(first: Vector, second: Vector): Double {
-//    if (first.size != second.size) {
-//        throw RuntimeException(
-//            "Dimension mismatch! first.size: " + first.size +
-//            " second.size: " + second.size
-//        )
-//    }
     return first.mapIndexed { index, value -> value * second[index] }.sum()
 }
 
@@ -121,13 +97,11 @@ fun multiply(first: Matrix, second: Matrix): Matrix {
     // result = m x p
 
     val result: Matrix = zeroMatrix(getWidth(second), getHeight(first))
-
-    for (col in 0 until getWidth(second)) {
-        for (row in 0 until getHeight(first)) {
+    for (row in 0 until getHeight(first)) {
+        for (col in 0 until getWidth(second)) {
             result[row][col] = dot(getRow(first, row), getCol(second, col))
         }
     }
-
     return result
 }
 
@@ -144,6 +118,7 @@ fun multiply(first: Matrix, second: Vector): Vector {
     // B      = 1 x n
     // Do: A * B^T, or each row multiplied by vector
     // result = m x 1
+
     return first.map { row -> dot(row, second) }.toTypedArray()
 }
 
@@ -153,7 +128,7 @@ fun multiply(first: Vector, second: Matrix): Vector {
     // Do: A * B, or vector multiplied by each column in matrix
     // result = 1 x n
 
-    val result: Vector = Array(getWidth(second)) { 0.0 }
+    val result: Vector = zeroVector(getWidth(second))
     for (i in 0 until getWidth(second)) {
         result[i] = dot(first, getCol(second, i))
     }
@@ -164,6 +139,7 @@ fun multiply(first: Vector, second: Matrix): Vector {
 // multiplication where the result reduces to a single value,
 // use this method for the other way (ie. when vector * vector
 // would turn into a matrix)
+
 fun multiply(first: Vector, second: Vector): Matrix {
     // first: m x 1
     // second: n x 1
@@ -171,13 +147,11 @@ fun multiply(first: Vector, second: Vector): Matrix {
     // result: m x n
 
     val result: Matrix = zeroMatrix(second.size, first.size)
-
     for (row in 0 until first.size) {
         for (col in 0 until second.size) {
             result[row][col] = first[row] * second[col]
         }
     }
-
     return result
 }
 
@@ -340,13 +314,12 @@ fun raleighQuotientEigenvalue(matrix: Matrix, eigenvector: Vector): Double {
 
 fun powerIteration(matrix: Matrix): Vector {
     var b: Vector = Array(getHeight(matrix)) { Random.nextDouble() }
-    var numerator: Vector
-    var denominator: Double
+    println("b0: ${b.contentDeepToString()}")
 
     println("For powerIteration calc...")
     for (i in 0 until 50) {
-        numerator = multiply(matrix, b)
-        denominator = norm2(numerator)
+        val numerator: Vector = multiply(matrix, b)
+        val denominator: Double = norm2(numerator)
         b = scalarDivide(denominator, numerator)
 
         println("b at $i: ${b.contentDeepToString()}")
