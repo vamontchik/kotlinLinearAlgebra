@@ -39,16 +39,16 @@ fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
 }
 
 fun getRow(matrix: Matrix, index: Int): Vector {
-    if (index < 0 || index >= getHeight(matrix)) {
-        throw RuntimeException("Index is invalid! index: $index, num rows: " + getHeight(matrix))
-    }
+//    if (index < 0 || index >= getHeight(matrix)) {
+//        throw RuntimeException("Index is invalid! index: $index, num rows: " + getHeight(matrix))
+//    }
     return matrix[index]
 }
 
 fun getCol(matrix: Matrix, index: Int): Vector {
-    if (index < 0 || index >= getWidth(matrix)) {
-        throw RuntimeException("Index is invalid! index: $index, num columns: " + getWidth(matrix))
-    }
+//    if (index < 0 || index >= getWidth(matrix)) {
+//        throw RuntimeException("Index is invalid! index: $index, num columns: " + getWidth(matrix))
+//    }
     return matrix.map { it[index] }.toTypedArray()
 }
 
@@ -106,12 +106,12 @@ fun subtract(first: Matrix, second: Matrix): Matrix {
 }
 
 fun dot(first: Vector, second: Vector): Double {
-    if (first.size != second.size) {
-        throw RuntimeException(
-            "Dimension mismatch! first.size: " + first.size +
-            " second.size: " + second.size
-        )
-    }
+//    if (first.size != second.size) {
+//        throw RuntimeException(
+//            "Dimension mismatch! first.size: " + first.size +
+//            " second.size: " + second.size
+//        )
+//    }
     return first.mapIndexed { index, value -> value * second[index] }.sum()
 }
 
@@ -289,9 +289,9 @@ fun subMatrix(matrix: Matrix, removeRow: Int, removeCol: Int): Matrix {
 }
 
 fun determinant(matrix: Matrix): Double {
-    if (getWidth(matrix) != getHeight(matrix)) {
-        throw RuntimeException("Non-square matrix cannot have a determinant!")
-    }
+//    if (getWidth(matrix) != getHeight(matrix)) {
+//        throw RuntimeException("Non-square matrix cannot have a determinant!")
+//    }
 
     // base case
     if (getWidth(matrix) == 2) {
