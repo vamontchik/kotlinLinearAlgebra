@@ -228,6 +228,32 @@ class LinAlgTest {
         assertTrue { doubleComparison(norm(vector, 2.0), result) }
     }
 
+    @Test
+    fun scalarMultiplyTest() {
+        val base: Matrix = arrayOf(
+            arrayOf(3.0, 6.0, 9.0, 12.0),
+            arrayOf(15.0, 18.0, 21.0, 24.0)
+        )
+        val scalar = 3.0
+        val result: Matrix = arrayOf(
+            arrayOf(9.0, 18.0, 27.0, 36.0),
+            arrayOf(45.0, 54.0, 63.0, 72.0)
+        )
+        matrixEquals(scalarMultiply(scalar, base), result)
+    }
+
+    @Test
+    fun scalarDivideTest() {
+        val base: Vector = arrayOf(
+            3.0, 6.0, 9.0, 12.0
+        )
+        val scalar = 3.0
+        val result: Vector = arrayOf(
+            1.0, 2.0, 3.0, 4.0
+        )
+        vectorEquals(scalarDivide(scalar, base), result)
+    }
+
 //    @Test
 //    fun eigenTest() {
 //        val m: Matrix = arrayOf(
