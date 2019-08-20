@@ -159,42 +159,6 @@ fun norm2(v: Vector): Double {
     return sqrt(v.reduce { acc, value -> acc.plus(value.pow(2)) })
 }
 
-// TODO: Fix this, since it doesn't produce the correct values...
-fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
-     val amount: Int =
-        if (getWidth(matrix) < getHeight(matrix)) {
-            getWidth(matrix)
-        } else {
-            getHeight(matrix)
-        }
-
-    val eigenvalues: Vector = zeroVector(amount)
-    val eigenvectors: Matrix = zeroMatrix(amount, amount)
-
-    var currMatrix: Matrix = matrix
-//    var isFirstIteration = true
-    for (i in 0 until amount) {
-        printMatrix("currMatrix", currMatrix)
-
-//        eigenvectors[i] =
-//            if (isFirstIteration) {
-//                isFirstIteration = false
-//                powerIteration(currMatrix)
-//            } else {
-//                raleighQuotientEigenvector(currMatrix, eigenvalues[i - 1], eigenvectors[i - 1])
-//            }
-        eigenvectors[i] = powerIteration(currMatrix)
-        eigenvalues[i] = raleighQuotientEigenvalue(currMatrix, eigenvectors[i])
-
-        println("eigenvector at $i: ${eigenvectors[i].contentDeepToString()}")
-        println("eigenvalue at $i: ${eigenvalues[i]}")
-
-        currMatrix = deflation(currMatrix, eigenvectors[i], eigenvalues[i])
-    }
-
-    return Pair(eigenvalues, eigenvectors)
-}
-
 fun zeroVector(size: Int): Vector {
     return Array(size) { 0.0 }
 }
@@ -203,14 +167,6 @@ fun zeroMatrix(width: Int, height: Int): Matrix {
     return Array(height) {
         Array(width) { 0.0 }
     }
-}
-
-fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
-    val rightHandMatrix: Matrix = scalarMultiply(
-        eigenvalue / norm2(eigenvector),
-        multiply(eigenvector, eigenvector)
-    )
-    return subtract(currMatrix, rightHandMatrix)
 }
 
 fun scalarMultiply(scalar: Double, matrix: Matrix): Matrix {
@@ -245,24 +201,24 @@ fun scalarDivide(scalar: Double, v: Vector): Vector {
 //    return transpose(cofactorMatrix)
 //}
 
-fun subMatrix(matrix: Matrix, removeRow: Int, removeCol: Int): Matrix {
-    val subMatrix: Matrix = zeroMatrix(getWidth(matrix) - 1, getHeight(matrix) - 1)
-
-    var trueRow = 0
-    var trueCol = 0
-    for (row in 0 until getWidth(matrix)) {
-        if (row == removeRow) continue
-        for (col in 0 until getHeight(matrix)) {
-            if (col == removeCol) continue
-            subMatrix[trueRow][trueCol] = matrix[row][col]
-            ++trueCol
-        }
-        trueCol = 0
-        ++trueRow
-    }
-
-    return subMatrix
-}
+//fun subMatrix(matrix: Matrix, removeRow: Int, removeCol: Int): Matrix {
+//    val subMatrix: Matrix = zeroMatrix(getWidth(matrix) - 1, getHeight(matrix) - 1)
+//
+//    var trueRow = 0
+//    var trueCol = 0
+//    for (row in 0 until getWidth(matrix)) {
+//        if (row == removeRow) continue
+//        for (col in 0 until getHeight(matrix)) {
+//            if (col == removeCol) continue
+//            subMatrix[trueRow][trueCol] = matrix[row][col]
+//            ++trueCol
+//        }
+//        trueCol = 0
+//        ++trueRow
+//    }
+//
+//    return subMatrix
+//}
 
 //fun determinant(matrix: Matrix): Double {
 //    // base case
@@ -344,4 +300,48 @@ fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
     // TODO: finish svd calculation...
 
     return Triple(A, A, A) // dummy for compiler
+}
+
+// TODO: Fix this, since it doesn't produce the correct values...
+fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
+    val amount: Int =
+        if (getWidth(matrix) < getHeight(matrix)) {
+            getWidth(matrix)
+        } else {
+            getHeight(matrix)
+        }
+
+    val eigenvalues: Vector = zeroVector(amount)
+    val eigenvectors: Matrix = zeroMatrix(amount, amount)
+
+    var currMatrix: Matrix = matrix
+//    var isFirstIteration = true
+    for (i in 0 until amount) {
+        printMatrix("currMatrix", currMatrix)
+
+//        eigenvectors[i] =
+//            if (isFirstIteration) {
+//                isFirstIteration = false
+//                powerIteration(currMatrix)
+//            } else {
+//                raleighQuotientEigenvector(currMatrix, eigenvalues[i - 1], eigenvectors[i - 1])
+//            }
+        eigenvectors[i] = powerIteration(currMatrix)
+        eigenvalues[i] = raleighQuotientEigenvalue(currMatrix, eigenvectors[i])
+
+        println("eigenvector at $i: ${eigenvectors[i].contentDeepToString()}")
+        println("eigenvalue at $i: ${eigenvalues[i]}")
+
+        currMatrix = deflation(currMatrix, eigenvectors[i], eigenvalues[i])
+    }
+
+    return Pair(eigenvalues, eigenvectors)
+}
+
+fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
+    val rightHandMatrix: Matrix = scalarMultiply(
+        eigenvalue / norm2(eigenvector),
+        multiply(eigenvector, eigenvector)
+    )
+    return subtract(currMatrix, rightHandMatrix)
 }
