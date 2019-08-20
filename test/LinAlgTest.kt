@@ -1,5 +1,6 @@
 import math.*
 import kotlin.math.abs
+import kotlin.math.sqrt
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
@@ -218,10 +219,31 @@ class LinAlgTest {
         matrixEquals(multiplied, result)
     }
 
+    @Test
+    fun normTwoTest() {
+        val vector: Vector = arrayOf(
+            5.0, 6.0, 7.0, 8.0, 9.0, 10.0
+        )
+        val result = sqrt(355.0)
+        assertTrue { doubleComparison(norm2(vector), result) }
+    }
+
 //    @Test
 //    fun eigenTest() {
-//        println("eigenTest...")
-//        val (eigenvalues, eigenvectors) = eigen(basicBase)
+//        val m: Matrix = arrayOf(
+//            arrayOf(7.0, 4.0, 1.0),
+//            arrayOf(4.0, 4.0, 4.0),
+//            arrayOf(1.0, 4.0, 7.0)
+//        )
+//        val eigenvaluesResult: Vector = arrayOf(
+//            12.0, 6.0, 0.0
+//        )
+//        val eigenvectorsResult: Matrix = arrayOf(
+//            arrayOf(1.0, 1.0, 1.0),
+//            arrayOf(-1.0, 0.0, 1.0),
+//            arrayOf(1.0, -2.0, 1.0)
+//        )
+//        val (eigenvalues, eigenvectors) = eigen(m)
 //        vectorEquals(eigenvalues, eigenvaluesResult)
 //        matrixEquals(eigenvectors, eigenvectorsResult)
 //    }
