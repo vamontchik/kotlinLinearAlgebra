@@ -225,7 +225,7 @@ class LinAlgTest {
             5.0, 6.0, 7.0, 8.0, 9.0, 10.0
         )
         val result = sqrt(355.0)
-        assertTrue { doubleComparison(norm2(vector), result) }
+        assertTrue { doubleComparison(norm(vector, 2.0), result) }
     }
 
 //    @Test

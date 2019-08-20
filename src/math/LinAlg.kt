@@ -1,5 +1,6 @@
 package math
 
+import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -122,8 +123,8 @@ fun multiply(first: Vector, second: Vector): Matrix {
     return result
 }
 
-fun norm2(v: Vector): Double {
-    return sqrt(v.reduce { acc, value -> acc.plus(value.pow(2)) })
+fun norm(v: Vector, degree: Double): Double {
+    return (v.reduce { acc, value -> acc.plus(abs(value).pow(degree)) }).pow(1 / degree)
 }
 
 fun zeroVector(size: Int): Vector {
@@ -242,7 +243,7 @@ fun powerIteration(matrix: Matrix): Vector {
     for (i in 0 until 50) {
         val numerator: Vector = multiply(matrix, b)
         println("numerator at $i: ${numerator.contentDeepToString()}")
-        val denominator: Double = norm2(numerator)
+        val denominator: Double = norm(numerator, 2.0)
         println("denominator at $i: $denominator")
         b = scalarDivide(denominator, numerator)
         println("b at $i: ${b.contentDeepToString()}")
@@ -307,7 +308,7 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
 
 fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
     val rightHandMatrix: Matrix = scalarMultiply(
-        eigenvalue / norm2(eigenvector),
+        eigenvalue / norm(eigenvector, 2.0),
         multiply(eigenvector, eigenvector)
     )
     return subtract(currMatrix, rightHandMatrix)
