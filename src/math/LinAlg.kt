@@ -1,42 +1,11 @@
 package math
 
-import ui.Grid
 import kotlin.math.pow
 import kotlin.math.sqrt
 import kotlin.random.Random
 
 typealias Matrix = Array<Array<Double>>
 typealias Vector = Array<Double>
-
-fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
-    println("Calling getEquationVerticalUp with loc: startX: $startX, startY: $startY")
-
-    // populate pairs lists with "pairs" of points,
-    // where .first == x and .second == y, so the
-    // pairs will be (x, y) coordinates
-    val points: MutableList<Double> = ArrayList()
-    var currentY = startY
-    while (currentY > 0) {
-        val square = grid.findSquare(startX, currentY)
-        val numberForSquare = square.labelCorner.toDouble()
-        points.add(numberForSquare)
-        currentY -= grid.squareLength
-    }
-
-    // set-up the matrices
-    val A: Matrix = Array(points.size) {
-        val doubleRep = it.toDouble()
-        arrayOf(doubleRep.pow(2.0), doubleRep, 1.0)
-    }
-    val b: Vector = points.toTypedArray()
-
-    // use linear least squares to find coefficients (x vector)
-    // for an equation of the form ax^2 + bx + c
-
-    val (U, E, Vt) = svd(A)
-
-    // TODO: finish least squares calculation...
-}
 
 fun getRow(matrix: Matrix, index: Int): Vector {
     return matrix[index]
@@ -47,16 +16,14 @@ fun getCol(matrix: Matrix, index: Int): Vector {
 }
 
 /**
- * Width = the amount of values in one inner array,
- * since we are looking row-major
+ * Width = the amount of values in one inner array, since we are looking row-major
  */
 fun getWidth(matrix: Matrix): Int {
     return matrix[0].size
 }
 
 /**
- * Height = the amount of inner arrays, since
- * we are looking row-major
+ * Height = the amount of inner arrays, since we are looking row-major
  */
 fun getHeight(matrix: Matrix): Int {
     return matrix.size
