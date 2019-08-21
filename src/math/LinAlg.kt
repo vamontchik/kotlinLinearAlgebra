@@ -273,8 +273,8 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     var currMatrix: Matrix = matrix
     for (i in 0 until amount) {
         printMatrix("currMatrix", currMatrix)
-        eigenvectors[i] = powerIteration(currMatrix)
-        eigenvalues[i] = raleighQuotientEigenvalue(currMatrix, eigenvectors[i])
+        eigenvectors[i] = fixForZeroesVector(powerIteration(currMatrix))
+        eigenvalues[i] = fixForZero(raleighQuotientEigenvalue(currMatrix, eigenvectors[i]))
 
         println("eigenvector at $i: ${eigenvectors[i].contentDeepToString()}")
         println("eigenvalue at $i: ${eigenvalues[i]}")
@@ -283,6 +283,19 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     }
 
     return Pair(eigenvalues, eigenvectors)
+}
+
+//
+// rounds away very small numbers, positive and negative, to 0.0
+//
+
+fun fixForZeroesVector(v: Vector): Vector {
+    return v.map { value -> fixForZero(value) }.toTypedArray()
+}
+
+fun fixForZero(value: Double): Double {
+    val threshold = 10E-10
+    return if (abs(value) < threshold) 0.0 else value
 }
 
 fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {

@@ -7,7 +7,7 @@ import kotlin.test.assertTrue
 class LinAlgTest {
     private fun doubleComparison(value: Double, target: Double): Boolean {
         val tolerance = 0.0001
-        return (abs(value) - target < tolerance)
+        return (abs(value - target) < tolerance)
     }
 
     private fun matrixEquals(first: Matrix, second: Matrix) {
@@ -134,7 +134,7 @@ class LinAlgTest {
         val result = arrayOf(
             arrayOf(0.0, 1.0, 2.0),
             arrayOf(3.0, 4.0, 5.0),
-            arrayOf(6.0, 8.0, 9.0)
+            arrayOf(6.0, 7.0, 8.0)
         )
         matrixEquals(subtract(subtractBase, toSubtract), result)
     }
@@ -254,23 +254,54 @@ class LinAlgTest {
         vectorEquals(scalarDivide(scalar, base), result)
     }
 
-//    @Test
-//    fun eigenTest() {
-//        val m: Matrix = arrayOf(
-//            arrayOf(7.0, 4.0, 1.0),
-//            arrayOf(4.0, 4.0, 4.0),
-//            arrayOf(1.0, 4.0, 7.0)
-//        )
-//        val eigenvaluesResult: Vector = arrayOf(
-//            12.0, 6.0, 0.0
-//        )
-//        val eigenvectorsResult: Matrix = arrayOf(
-//            arrayOf(1.0, 1.0, 1.0),
-//            arrayOf(-1.0, 0.0, 1.0),
-//            arrayOf(1.0, -2.0, 1.0)
-//        )
-//        val (eigenvalues, eigenvectors) = eigen(m)
-//        vectorEquals(eigenvalues, eigenvaluesResult)
-//        matrixEquals(eigenvectors, eigenvectorsResult)
-//    }
+    @Test
+    fun eigenTest() {
+        val m: Matrix = arrayOf(
+            arrayOf(7.0, 4.0, 1.0),
+            arrayOf(4.0, 4.0, 4.0),
+            arrayOf(1.0, 4.0, 7.0)
+        )
+        val eigenvaluesResult: Vector = arrayOf(
+            12.0, 6.0, 0.0
+        )
+        val eigenvectorsResult: Matrix = arrayOf(
+            arrayOf(1.0, 1.0, 1.0),
+            arrayOf(-1.0, 0.0, 1.0),
+            arrayOf(1.0, -2.0, 1.0)
+        )
+        val (eigenvalues, eigenvectors) = eigen(m)
+
+        println("eigenvalues found: ${eigenvalues.contentDeepToString()}")
+        printMatrix("eigenvectors", eigenvectors)
+
+        vectorEquals(eigenvalues, eigenvaluesResult)
+        isScalarMultipleOfEachVector(eigenvectors, eigenvectorsResult)
+    }
+
+    private fun isScalarMultipleOfEachVector(first: Matrix, second: Matrix) {
+        for (i in 0 until first.size) {
+            println("isScalarMultipleOf ${first[i].contentDeepToString()} with ${second[i].contentDeepToString()}...")
+            isScalarMultipleOf(first[i], second[i])
+        }
+    }
+
+    private fun isScalarMultipleOf(first: Vector, second: Vector) {
+        val guessedScalar: Double = first[0] / second[0]
+        println("Guessed scalar: $guessedScalar")
+        for (i in 1 until first.size) {
+            println("Zero check with ${first[i]} and ${second[i]}...")
+            val canSkip = zeroCheck(first[i], second[i])
+            if (canSkip) continue
+            println("Comparing $guessedScalar with ${first[i]/second[i]}...")
+            assertTrue { doubleComparison(guessedScalar, first[i] / second[i]) }
+        }
+    }
+
+    private fun zeroCheck(first: Double, second: Double): Boolean {
+        if (doubleComparison(0.0, second)) {
+            assertTrue { doubleComparison(0.0, first) }
+            return true
+        }
+        return false
+    }
 }
