@@ -124,7 +124,7 @@ fun multiply(first: Vector, second: Vector): Matrix {
 }
 
 fun norm(v: Vector, degree: Double): Double {
-    return (v.reduce { acc, value -> acc.plus(abs(value).pow(degree)) }).pow(1 / degree)
+    return (v.fold(0.0) { acc, value -> acc.plus(abs(value).pow(degree)) }).pow(1 / degree)
 }
 
 fun zeroVector(size: Int): Vector {
@@ -213,18 +213,6 @@ fun scalarDivide(scalar: Double, v: Vector): Vector {
 //    return scalarDivide(determinant(matrix), adjoint(matrix))
 //}
 
-//fun raleighQuotientEigenvector(matrix: Matrix, eigenvalue: Double, eigenvector: Vector): Vector {
-//    val identity: Matrix = identity(getWidth(matrix))
-//    val scalarMultRes: Matrix = scalarMultiply(eigenvalue, identity)
-//    val inverse: Matrix = inverse(scalarMultRes)
-//    val numerator: Vector = multiply(inverse, eigenvector)
-//    val denominator: Double = norm2(numerator)
-//    println("For raleighQuotientEigenvector calc...")
-//    println("numerator: ${numerator.contentDeepToString()}")
-//    println("denominator: $denominator")
-//    return scalarDivide(denominator, numerator)
-//}
-
 fun raleighQuotientEigenvalue(matrix: Matrix, eigenvector: Vector): Double {
     val numerator: Double = dot(eigenvector, multiply(matrix, eigenvector))
     val denominator: Double = dot(eigenvector, eigenvector)
@@ -283,17 +271,8 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     val eigenvectors: Matrix = zeroMatrix(amount, amount)
 
     var currMatrix: Matrix = matrix
-//    var isFirstIteration = true
     for (i in 0 until amount) {
         printMatrix("currMatrix", currMatrix)
-
-//        eigenvectors[i] =
-//            if (isFirstIteration) {
-//                isFirstIteration = false
-//                powerIteration(currMatrix)
-//            } else {
-//                raleighQuotientEigenvector(currMatrix, eigenvalues[i - 1], eigenvectors[i - 1])
-//            }
         eigenvectors[i] = powerIteration(currMatrix)
         eigenvalues[i] = raleighQuotientEigenvalue(currMatrix, eigenvectors[i])
 
