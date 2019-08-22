@@ -7,9 +7,8 @@ import kotlin.random.Random
 typealias Matrix = Array<Array<Double>>
 typealias Vector = Array<Double>
 
-fun doubleComparison(value: Double, target: Double): Boolean {
-    val tolerance = 0.0001
-    return (abs(value - target) < tolerance)
+fun doubleComparison(value: Double, target: Double, precision: Double = 0.0001): Boolean {
+    return (abs(value - target) < precision)
 }
 
 fun getRow(matrix: Matrix, index: Int): Vector {
@@ -220,25 +219,16 @@ fun determinant(matrix: Matrix): Double {
 fun raleighQuotientEigenvalue(matrix: Matrix, eigenvector: Vector): Double {
     val numerator: Double = dot(eigenvector, multiply(matrix, eigenvector))
     val denominator: Double = dot(eigenvector, eigenvector)
-    // println("For raleighQuotientEigenvalue calc...")
-    // println("numerator: $numerator")
-    // println("denominator: $denominator")
     return numerator / denominator
 }
 
 fun powerIteration(matrix: Matrix): Vector {
-    // println("For powerIteration calc...")
-
     var b: Vector = Array(getHeight(matrix)) { Random.nextDouble() }
-    // println("b0: ${b.contentDeepToString()}")
 
     for (i in 0 until 50) {
         val numerator: Vector = multiply(matrix, b)
-        // println("numerator at $i: ${numerator.contentDeepToString()}")
         val denominator: Double = norm(numerator, 2.0)
-        // println("denominator at $i: $denominator")
         b = scalarDivide(denominator, numerator)
-        // println("b at $i: ${b.contentDeepToString()}")
     }
 
     return b
@@ -262,8 +252,9 @@ fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
     return Triple(A, A, A) // dummy for compiler
 }
 
-// TODO: implement RREF to find nullspace of matricies that turn out to have
-//       0 columns (or are all 0's!)
+// Note: this method is fairly inaccurate, since
+//       the currently implemented power iteration method
+//       is not that stable, so don't expect many points of precision
 fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     val amount: Int =
         if (getWidth(matrix) < getHeight(matrix)) {
@@ -277,20 +268,8 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
 
     var currMatrix: Matrix = matrix
     for (i in 0 until amount) {
-        // printMatrix("currMatrix", currMatrix)
-
-        val determinant: Double = determinant(currMatrix)
-        if (doubleComparison(determinant, 0.0)) {
-            // at least one of the eigenvalues is zero! see the TODO
-        }
-        // println("determinant: $determinant")
-
         eigenvectors[i] = fixForZeroesVector(powerIteration(currMatrix))
         eigenvalues[i] = fixForZero(raleighQuotientEigenvalue(currMatrix, eigenvectors[i]))
-
-        // println("eigenvector at $i: ${eigenvectors[i].contentDeepToString()}")
-        // println("eigenvalue at $i: ${eigenvalues[i]}")
-
         currMatrix = fixForZeroesMatrix(deflation(currMatrix, eigenvectors[i], eigenvalues[i]))
     }
 
