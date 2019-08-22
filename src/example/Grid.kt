@@ -1,4 +1,4 @@
-package ui
+package example
 
 import java.awt.Dimension
 import java.awt.Graphics
@@ -21,7 +21,7 @@ class Grid : JPanel() {
     }
 
     override fun paintComponent(g: Graphics?) {
-        if (g == null) throw RuntimeException("Graphics object in ui.Grid::paintComponent was null!")
+        if (g == null) throw RuntimeException("Graphics object in example.Grid::paintComponent was null!")
         super.paintComponent(g)
         for (square in listOfSquares) {
             square.draw(g)

@@ -1,6 +1,8 @@
-package math
+package example
 
-import ui.Grid
+import math.Matrix
+import math.Vector
+import math.svd
 import kotlin.math.pow
 
 fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
@@ -30,5 +32,5 @@ fun getEquationVerticalUp(startX: Int, startY: Int, grid: Grid) {
 
     val (U, E, Vt) = svd(A)
 
-    // TODO: finish least squares calculation...
+    // ... using svd, continue to solve some shenanigans ...
 }

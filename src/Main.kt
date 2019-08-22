@@ -1,6 +1,6 @@
-import math.getEquationVerticalUp
-import math.spiralPath
-import ui.Grid
+import example.getEquationVerticalUp
+import example.spiralPath
+import example.Grid
 import java.lang.RuntimeException
 import javax.swing.JFrame
 

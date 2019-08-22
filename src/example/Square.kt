@@ -1,4 +1,4 @@
-package ui
+package example
 
 import java.awt.Font
 import java.awt.Graphics
@@ -13,7 +13,7 @@ data class Square(val x: Int, val y: Int,
     fun draw(g: Graphics) {
         g.drawRect(x, y, width, height)
 
-        if (g.font == null) throw RuntimeException("g.font in ui.Square::draw was null!")
+        if (g.font == null) throw RuntimeException("g.font in example.Square::draw was null!")
 
         // set bold for corners
         if (isBold) {
