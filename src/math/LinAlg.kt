@@ -7,6 +7,11 @@ import kotlin.random.Random
 typealias Matrix = Array<Array<Double>>
 typealias Vector = Array<Double>
 
+fun doubleComparison(value: Double, target: Double): Boolean {
+    val tolerance = 0.0001
+    return (abs(value - target) < tolerance)
+}
+
 fun getRow(matrix: Matrix, index: Int): Vector {
     return matrix[index]
 }
@@ -215,25 +220,25 @@ fun determinant(matrix: Matrix): Double {
 fun raleighQuotientEigenvalue(matrix: Matrix, eigenvector: Vector): Double {
     val numerator: Double = dot(eigenvector, multiply(matrix, eigenvector))
     val denominator: Double = dot(eigenvector, eigenvector)
-    println("For raleighQuotientEigenvalue calc...")
-    println("numerator: $numerator")
-    println("denominator: $denominator")
+    // println("For raleighQuotientEigenvalue calc...")
+    // println("numerator: $numerator")
+    // println("denominator: $denominator")
     return numerator / denominator
 }
 
 fun powerIteration(matrix: Matrix): Vector {
-    println("For powerIteration calc...")
+    // println("For powerIteration calc...")
 
     var b: Vector = Array(getHeight(matrix)) { Random.nextDouble() }
-    println("b0: ${b.contentDeepToString()}")
+    // println("b0: ${b.contentDeepToString()}")
 
     for (i in 0 until 50) {
         val numerator: Vector = multiply(matrix, b)
-        println("numerator at $i: ${numerator.contentDeepToString()}")
+        // println("numerator at $i: ${numerator.contentDeepToString()}")
         val denominator: Double = norm(numerator, 2.0)
-        println("denominator at $i: $denominator")
+        // println("denominator at $i: $denominator")
         b = scalarDivide(denominator, numerator)
-        println("b at $i: ${b.contentDeepToString()}")
+        // println("b at $i: ${b.contentDeepToString()}")
     }
 
     return b
@@ -257,7 +262,8 @@ fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
     return Triple(A, A, A) // dummy for compiler
 }
 
-// TODO: Fix this, since it doesn't produce the correct values...
+// TODO: implement RREF to find nullspace of matricies that turn out to have
+//       0 columns (or are all 0's!)
 fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     val amount: Int =
         if (getWidth(matrix) < getHeight(matrix)) {
@@ -271,32 +277,24 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
 
     var currMatrix: Matrix = matrix
     for (i in 0 until amount) {
-        printMatrix("currMatrix", currMatrix)
-        println("determinant: " + determinant(currMatrix))
+        // printMatrix("currMatrix", currMatrix)
+
+        val determinant: Double = determinant(currMatrix)
+        if (doubleComparison(determinant, 0.0)) {
+            // at least one of the eigenvalues is zero! see the TODO
+        }
+        // println("determinant: $determinant")
 
         eigenvectors[i] = fixForZeroesVector(powerIteration(currMatrix))
         eigenvalues[i] = fixForZero(raleighQuotientEigenvalue(currMatrix, eigenvectors[i]))
 
-        println("eigenvector at $i: ${eigenvectors[i].contentDeepToString()}")
-        println("eigenvalue at $i: ${eigenvalues[i]}")
+        // println("eigenvector at $i: ${eigenvectors[i].contentDeepToString()}")
+        // println("eigenvalue at $i: ${eigenvalues[i]}")
 
-        currMatrix = deflation(currMatrix, eigenvectors[i], eigenvalues[i])
+        currMatrix = fixForZeroesMatrix(deflation(currMatrix, eigenvectors[i], eigenvalues[i]))
     }
 
     return Pair(eigenvalues, eigenvectors)
-}
-
-//
-// rounds away very small numbers, positive and negative, to 0.0
-//
-
-fun fixForZeroesVector(v: Vector): Vector {
-    return v.map { value -> fixForZero(value) }.toTypedArray()
-}
-
-fun fixForZero(value: Double): Double {
-    val threshold = 10E-10
-    return if (abs(value) < threshold) 0.0 else value
 }
 
 fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
@@ -305,4 +303,21 @@ fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matr
         multiply(eigenvector, eigenvector)
     )
     return subtract(currMatrix, rightHandMatrix)
+}
+
+//
+// rounds away very small numbers, positive and negative, to 0.0
+//
+
+fun fixForZeroesMatrix(matrix: Matrix): Matrix {
+    return matrix.map { row -> fixForZeroesVector(row) }.toTypedArray()
+}
+
+fun fixForZeroesVector(v: Vector): Vector {
+    return v.map { value -> fixForZero(value) }.toTypedArray()
+}
+
+fun fixForZero(value: Double): Double {
+    val threshold = 10E-10
+    return if (abs(value) < threshold) 0.0 else value
 }
