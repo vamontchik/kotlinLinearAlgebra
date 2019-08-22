@@ -1,3 +1,5 @@
+package example
+
 import example.getEquationVerticalUp
 import example.spiralPath
 import example.Grid
