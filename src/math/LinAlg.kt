@@ -2,7 +2,6 @@ package math
 
 import kotlin.math.abs
 import kotlin.math.pow
-import kotlin.math.sqrt
 import kotlin.random.Random
 
 typealias Matrix = Array<Array<Double>>
@@ -169,45 +168,45 @@ fun scalarDivide(scalar: Double, v: Vector): Vector {
 //    return transpose(cofactorMatrix)
 //}
 
-//fun subMatrix(matrix: Matrix, removeRow: Int, removeCol: Int): Matrix {
-//    val subMatrix: Matrix = zeroMatrix(getWidth(matrix) - 1, getHeight(matrix) - 1)
-//
-//    var trueRow = 0
-//    var trueCol = 0
-//    for (row in 0 until getWidth(matrix)) {
-//        if (row == removeRow) continue
-//        for (col in 0 until getHeight(matrix)) {
-//            if (col == removeCol) continue
-//            subMatrix[trueRow][trueCol] = matrix[row][col]
-//            ++trueCol
-//        }
-//        trueCol = 0
-//        ++trueRow
-//    }
-//
-//    return subMatrix
-//}
+fun subMatrix(matrix: Matrix, removeRow: Int, removeCol: Int): Matrix {
+    val subMatrix: Matrix = zeroMatrix(getWidth(matrix) - 1, getHeight(matrix) - 1)
 
-//fun determinant(matrix: Matrix): Double {
-//    // base case
-//    if (getWidth(matrix) == 2) {
-//        return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]
-//    }
-//
-//    val topRow: Vector = getRow(matrix, 0)
-//    var accumulator = 0.0
-//    var negativeSign = false
-//    for (i in 0 until getWidth(matrix)) {
-//        if (negativeSign) {
-//            accumulator -= topRow[i] * determinant(subMatrix(matrix, 0, i))
-//            negativeSign = false
-//        } else {
-//            accumulator += topRow[i] * determinant(subMatrix(matrix, 0, i))
-//            negativeSign = true
-//        }
-//    }
-//    return accumulator
-//}
+    var trueRow = 0
+    var trueCol = 0
+    for (row in 0 until getWidth(matrix)) {
+        if (row == removeRow) continue
+        for (col in 0 until getHeight(matrix)) {
+            if (col == removeCol) continue
+            subMatrix[trueRow][trueCol] = matrix[row][col]
+            ++trueCol
+        }
+        trueCol = 0
+        ++trueRow
+    }
+
+    return subMatrix
+}
+
+fun determinant(matrix: Matrix): Double {
+    // base case
+    if (getWidth(matrix) == 2) {
+        return matrix[0][0]*matrix[1][1] - matrix[0][1]*matrix[1][0]
+    }
+
+    val topRow: Vector = getRow(matrix, 0)
+    var accumulator = 0.0
+    var negativeSign = false
+    for (i in 0 until getWidth(matrix)) {
+        if (negativeSign) {
+            accumulator -= topRow[i] * determinant(subMatrix(matrix, 0, i))
+            negativeSign = false
+        } else {
+            accumulator += topRow[i] * determinant(subMatrix(matrix, 0, i))
+            negativeSign = true
+        }
+    }
+    return accumulator
+}
 
 //fun inverse(matrix: Matrix): Matrix {
 //    return scalarDivide(determinant(matrix), adjoint(matrix))
@@ -273,6 +272,8 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     var currMatrix: Matrix = matrix
     for (i in 0 until amount) {
         printMatrix("currMatrix", currMatrix)
+        println("determinant: " + determinant(currMatrix))
+
         eigenvectors[i] = fixForZeroesVector(powerIteration(currMatrix))
         eigenvalues[i] = fixForZero(raleighQuotientEigenvalue(currMatrix, eigenvectors[i]))
 
