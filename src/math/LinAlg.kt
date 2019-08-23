@@ -127,6 +127,9 @@ fun multiply(first: Vector, second: Vector): Matrix {
 }
 
 fun norm(v: Vector, degree: Double): Double {
+    if (degree == Double.POSITIVE_INFINITY) {
+        return v.map { value -> abs(value) }.max()!! // !! should never fire off...
+    }
     return (v.fold(0.0) { acc, value -> acc.plus(abs(value).pow(degree)) }).pow(1 / degree)
 }
 
@@ -216,19 +219,28 @@ fun determinant(matrix: Matrix): Double {
 //    return scalarDivide(determinant(matrix), adjoint(matrix))
 //}
 
-fun raleighQuotientEigenvalue(matrix: Matrix, eigenvector: Vector): Double {
+fun raleighQuotient(matrix: Matrix, eigenvector: Vector): Double {
     val numerator: Double = dot(eigenvector, multiply(matrix, eigenvector))
     val denominator: Double = dot(eigenvector, eigenvector)
     return numerator / denominator
 }
 
 fun powerIteration(matrix: Matrix): Vector {
-    var b: Vector = Array(getHeight(matrix)) { Random.nextDouble() }
+    var b: Vector = Array(getHeight(matrix)) { Random.nextDouble() }.also {
+        println("POWER ITERATION")
+        println("starting random vector: ${it.contentDeepToString()}")
+    }
 
     for (i in 0 until 50) {
-        val numerator: Vector = multiply(matrix, b)
-        val denominator: Double = norm(numerator, 2.0)
-        b = scalarDivide(denominator, numerator)
+        val numerator: Vector = multiply(matrix, b).also {
+            println("numerator at $i : ${it.contentDeepToString()}")
+        }
+        val denominator: Double = norm(numerator, Double.POSITIVE_INFINITY).also {
+            println("denominator at $i : $it")
+        }
+        b = scalarDivide(denominator, numerator).also {
+            println("b at $i : ${it.contentDeepToString()}")
+        }
     }
 
     return b
@@ -266,11 +278,17 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     val eigenvalues: Vector = zeroVector(amount)
     val eigenvectors: Matrix = zeroMatrix(amount, amount)
 
-    var currMatrix: Matrix = matrix
+    var currMatrix: Matrix = matrix.also { printMatrix("currMatrix", it) }
     for (i in 0 until amount) {
-        eigenvectors[i] = fixForZeroesVector(powerIteration(currMatrix))
-        eigenvalues[i] = fixForZero(raleighQuotientEigenvalue(currMatrix, eigenvectors[i]))
-        currMatrix = fixForZeroesMatrix(deflation(currMatrix, eigenvectors[i], eigenvalues[i]))
+        eigenvectors[i] = fixForZeroesVector(powerIteration(currMatrix)).also {
+            println("eigenvector found: ${it.contentDeepToString()}")
+        }
+        eigenvalues[i] = fixForZero(raleighQuotient(currMatrix, eigenvectors[i])).also {
+            println("eigenvalue found: $it")
+        }
+        currMatrix = fixForZeroesMatrix(deflation(currMatrix, eigenvectors[i], eigenvalues[i])).also {
+            printMatrix("currMatrix", it)
+        }
     }
 
     return Pair(eigenvalues, eigenvectors)

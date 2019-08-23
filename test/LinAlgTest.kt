@@ -294,6 +294,6 @@ class LinAlgTest {
         printMatrix("eigenvectors", eigenvectors)
 
         vectorEquals(eigenvalues, eigenvaluesResult, 0.01)
-        //isScalarMultipleOfEachVector(eigenvectors, eigenvectorsResult)
+        isScalarMultipleOfEachVector(eigenvectors, eigenvectorsResult)
     }
 }
