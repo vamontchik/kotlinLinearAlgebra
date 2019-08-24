@@ -264,9 +264,6 @@ fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
     return Triple(A, A, A) // dummy for compiler
 }
 
-// Note: this method is fairly inaccurate, since
-//       the currently implemented power iteration method
-//       is not that stable, so don't expect many points of precision
 fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
     val amount: Int =
         if (getWidth(matrix) < getHeight(matrix)) {
@@ -296,8 +293,7 @@ fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
 
 fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
     val rightHandMatrix: Matrix = scalarMultiply(
-        eigenvalue / norm(eigenvector, 2.0),
-        multiply(eigenvector, eigenvector)
+        eigenvalue, multiply(eigenvector, eigenvector)
     )
     return subtract(currMatrix, rightHandMatrix)
 }

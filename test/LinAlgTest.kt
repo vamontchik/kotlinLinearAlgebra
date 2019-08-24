@@ -296,4 +296,30 @@ class LinAlgTest {
         vectorEquals(eigenvalues, eigenvaluesResult, 0.01)
         isScalarMultipleOfEachVector(eigenvectors, eigenvectorsResult)
     }
+
+    @Test
+    fun simpleEigenTestTwo() {
+        val m: Matrix = arrayOf(
+            arrayOf(35.0, 45.0, 55.0),
+            arrayOf(75.0, 83.0, 95.0),
+            arrayOf(105.0, 115.0, 127.0)
+        )
+        val eigenvectorsResult: Matrix = arrayOf(
+            arrayOf(0.402557, 0.733662, 1.0),
+            arrayOf(-1.43706, 0.140923, 1.0),
+            arrayOf(0.960684, -1.98979, 1.0)
+        )
+        val eigenvaluesResult: Vector = arrayOf(
+            253.64, 7.68538, 0.954181
+        )
+        val (eigenvalues, eigenvectors) = eigen(m)
+
+        println("eigenvalues found: ${eigenvalues.contentDeepToString()}")
+        printMatrix("eigenvectors", eigenvectors)
+
+        vectorEquals(eigenvalues, eigenvaluesResult, 0.01)
+        isScalarMultipleOfEachVector(eigenvectors, eigenvectorsResult)
+    }
+
+    //TODO: write more matrix eigen() ???
 }
