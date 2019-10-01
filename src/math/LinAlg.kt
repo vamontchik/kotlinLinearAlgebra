@@ -2,7 +2,6 @@ package math
 
 import kotlin.math.abs
 import kotlin.math.pow
-import kotlin.random.Random
 
 typealias Matrix = Array<Array<Double>>
 typealias Vector = Array<Double>
@@ -118,8 +117,8 @@ fun multiply(first: Vector, second: Vector): Matrix {
     // result: m x n
 
     val result: Matrix = zeroMatrix(second.size, first.size)
-    for (row in 0 until first.size) {
-        for (col in 0 until second.size) {
+    for (row in first.indices) {
+        for (col in second.indices) {
             result[row][col] = first[row] * second[col]
         }
     }
@@ -144,36 +143,44 @@ fun zeroMatrix(width: Int, height: Int): Matrix {
 }
 
 fun scalarMultiply(scalar: Double, matrix: Matrix): Matrix {
-    return matrix.map { it.map { it.times(scalar) }.toTypedArray() }.toTypedArray()
+    return matrix.map { it.map { inner_it -> inner_it.times(scalar) }.toTypedArray() }.toTypedArray()
 }
 
-//fun scalarDivide(scalar: Double, matrix: Matrix): Matrix {
-//    return matrix.map { it.map { it.div(scalar) }.toTypedArray() }.toTypedArray()
-//}
+fun scalarDivide(scalar: Double, matrix: Matrix): Matrix {
+    return matrix.map { it.map { inner_it -> inner_it.div(scalar) }.toTypedArray() }.toTypedArray()
+}
 
 fun scalarDivide(scalar: Double, v: Vector): Vector {
     return v.map { value -> value / scalar }.toTypedArray()
 }
 
-//fun identity(amount: Int): Matrix {
-//    val matrix: Matrix = zeroMatrix(amount, amount)
-//    for (i in 0 until amount) {
-//        matrix[i][i] = 1.0
-//    }
-//    return matrix
-//}
+fun identity(amount: Int): Matrix {
+    val matrix: Matrix = zeroMatrix(amount, amount)
+    for (i in 0 until amount) {
+        matrix[i][i] = 1.0
+    }
+    return matrix
+}
 
-//fun adjoint(matrix: Matrix): Matrix {
-//    val cofactorMatrix: Matrix = zeroMatrix(getWidth(matrix), getHeight(matrix))
-//
-//    for (row in 0 until getWidth(matrix)) {
-//        for (col in 0 until getHeight(matrix)) {
-//            cofactorMatrix[row][col] = determinant(subMatrix(matrix, row, col))
-//        }
-//    }
-//
-//    return transpose(cofactorMatrix)
-//}
+fun adjoint(matrix: Matrix): Matrix {
+    val cofactorMatrix: Matrix = zeroMatrix(getWidth(matrix), getHeight(matrix))
+
+    var negativeSign = false
+    for (row in 0 until getWidth(matrix)) {
+        for (col in 0 until getHeight(matrix)) {
+            if (negativeSign) {
+                cofactorMatrix[row][col] = -1 * determinant(subMatrix(matrix, row, col))
+                negativeSign = false
+            } else {
+                cofactorMatrix[row][col] = determinant(subMatrix(matrix, row, col))
+                negativeSign = true
+            }
+
+        }
+    }
+
+    return transpose(cofactorMatrix)
+}
 
 fun subMatrix(matrix: Matrix, removeRow: Int, removeCol: Int): Matrix {
     val subMatrix: Matrix = zeroMatrix(getWidth(matrix) - 1, getHeight(matrix) - 1)
@@ -215,102 +222,102 @@ fun determinant(matrix: Matrix): Double {
     return accumulator
 }
 
-//fun inverse(matrix: Matrix): Matrix {
-//    return scalarDivide(determinant(matrix), adjoint(matrix))
+fun inverse(matrix: Matrix): Matrix {
+    return scalarDivide(determinant(matrix), adjoint(matrix))
+}
+
+//fun raleighQuotient(matrix: Matrix, eigenvector: Vector): Double {
+//    val numerator: Double = dot(eigenvector, multiply(matrix, eigenvector))
+//    val denominator: Double = dot(eigenvector, eigenvector)
+//    return numerator / denominator
+//}
+//
+//fun powerIteration(matrix: Matrix): Vector {
+//    var b: Vector = Array(getHeight(matrix)) { Random.nextDouble() }.also {
+//        println("POWER ITERATION")
+//        println("starting random vector: ${it.contentDeepToString()}")
+//    }
+//
+//    for (i in 0 until 50) {
+//        val numerator: Vector = multiply(matrix, b).also {
+//            println("numerator at $i : ${it.contentDeepToString()}")
+//        }
+//        val denominator: Double = norm(numerator, Double.POSITIVE_INFINITY).also {
+//            println("denominator at $i : $it")
+//        }
+//        b = scalarDivide(denominator, numerator).also {
+//            println("b at $i : ${it.contentDeepToString()}")
+//        }
+//    }
+//
+//    return b
 //}
 
-fun raleighQuotient(matrix: Matrix, eigenvector: Vector): Double {
-    val numerator: Double = dot(eigenvector, multiply(matrix, eigenvector))
-    val denominator: Double = dot(eigenvector, eigenvector)
-    return numerator / denominator
-}
+//fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
+//    printMatrix("A", A)
+//
+//    val At: Matrix = transpose(A)
+//    printMatrix("At", At)
+//
+//    val product: Matrix = multiply(At, A)
+//    printMatrix("product", product)
+//
+//    val (eigenvalues, eigenvectors) = eigen(product)
+//    println("eigenvalues: ${eigenvalues.contentDeepToString()}")
+//    printMatrix("eigenvectors", eigenvectors)
+//
+//    // TODO: finish svd calculation...
+//
+//    return Triple(A, A, A) // dummy for compiler
+//}
 
-fun powerIteration(matrix: Matrix): Vector {
-    var b: Vector = Array(getHeight(matrix)) { Random.nextDouble() }.also {
-        println("POWER ITERATION")
-        println("starting random vector: ${it.contentDeepToString()}")
-    }
+//fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
+//    val amount: Int =
+//        if (getWidth(matrix) < getHeight(matrix)) {
+//            getWidth(matrix)
+//        } else {
+//            getHeight(matrix)
+//        }
+//
+//    val eigenvalues: Vector = zeroVector(amount)
+//    val eigenvectors: Matrix = zeroMatrix(amount, amount)
+//
+//    var currMatrix: Matrix = matrix.also { printMatrix("currMatrix", it) }
+//    for (i in 0 until amount) {
+//        eigenvectors[i] = fixForZeroesVector(powerIteration(currMatrix)).also {
+//            println("eigenvector found: ${it.contentDeepToString()}")
+//        }
+//        eigenvalues[i] = fixForZero(raleighQuotient(currMatrix, eigenvectors[i])).also {
+//            println("eigenvalue found: $it")
+//        }
+//        currMatrix = fixForZeroesMatrix(deflation(currMatrix, eigenvectors[i], eigenvalues[i])).also {
+//            printMatrix("currMatrix", it)
+//        }
+//    }
+//
+//    return Pair(eigenvalues, eigenvectors)
+//}
 
-    for (i in 0 until 50) {
-        val numerator: Vector = multiply(matrix, b).also {
-            println("numerator at $i : ${it.contentDeepToString()}")
-        }
-        val denominator: Double = norm(numerator, Double.POSITIVE_INFINITY).also {
-            println("denominator at $i : $it")
-        }
-        b = scalarDivide(denominator, numerator).also {
-            println("b at $i : ${it.contentDeepToString()}")
-        }
-    }
-
-    return b
-}
-
-fun svd(A: Matrix): Triple<Matrix, Matrix, Matrix> {
-    printMatrix("A", A)
-
-    val At: Matrix = transpose(A)
-    printMatrix("At", At)
-
-    val product: Matrix = multiply(At, A)
-    printMatrix("product", product)
-
-    val (eigenvalues, eigenvectors) = eigen(product)
-    println("eigenvalues: ${eigenvalues.contentDeepToString()}")
-    printMatrix("eigenvectors", eigenvectors)
-
-    // TODO: finish svd calculation...
-
-    return Triple(A, A, A) // dummy for compiler
-}
-
-fun eigen(matrix: Matrix): Pair<Vector, Matrix> {
-    val amount: Int =
-        if (getWidth(matrix) < getHeight(matrix)) {
-            getWidth(matrix)
-        } else {
-            getHeight(matrix)
-        }
-
-    val eigenvalues: Vector = zeroVector(amount)
-    val eigenvectors: Matrix = zeroMatrix(amount, amount)
-
-    var currMatrix: Matrix = matrix.also { printMatrix("currMatrix", it) }
-    for (i in 0 until amount) {
-        eigenvectors[i] = fixForZeroesVector(powerIteration(currMatrix)).also {
-            println("eigenvector found: ${it.contentDeepToString()}")
-        }
-        eigenvalues[i] = fixForZero(raleighQuotient(currMatrix, eigenvectors[i])).also {
-            println("eigenvalue found: $it")
-        }
-        currMatrix = fixForZeroesMatrix(deflation(currMatrix, eigenvectors[i], eigenvalues[i])).also {
-            printMatrix("currMatrix", it)
-        }
-    }
-
-    return Pair(eigenvalues, eigenvectors)
-}
-
-fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
-    val rightHandMatrix: Matrix = scalarMultiply(
-        eigenvalue, multiply(eigenvector, eigenvector)
-    )
-    return subtract(currMatrix, rightHandMatrix)
-}
+//fun deflation(currMatrix: Matrix, eigenvector: Vector, eigenvalue: Double): Matrix {
+//    val rightHandMatrix: Matrix = scalarMultiply(
+//        eigenvalue, multiply(eigenvector, eigenvector)
+//    )
+//    return subtract(currMatrix, rightHandMatrix)
+//}
 
 //
 // rounds away very small numbers, positive and negative, to 0.0
 //
 
-fun fixForZeroesMatrix(matrix: Matrix): Matrix {
-    return matrix.map { row -> fixForZeroesVector(row) }.toTypedArray()
-}
-
-fun fixForZeroesVector(v: Vector): Vector {
-    return v.map { value -> fixForZero(value) }.toTypedArray()
-}
-
-fun fixForZero(value: Double): Double {
-    val threshold = 10E-10
-    return if (abs(value) < threshold) 0.0 else value
-}
+//fun fixForZeroesMatrix(matrix: Matrix): Matrix {
+//    return matrix.map { row -> fixForZeroesVector(row) }.toTypedArray()
+//}
+//
+//fun fixForZeroesVector(v: Vector): Vector {
+//    return v.map { value -> fixForZero(value) }.toTypedArray()
+//}
+//
+//fun fixForZero(value: Double): Double {
+//    val threshold = 10E-10
+//    return if (abs(value) < threshold) 0.0 else value
+//}

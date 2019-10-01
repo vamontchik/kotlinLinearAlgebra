@@ -275,51 +275,116 @@ class LinAlgTest {
         vectorEquals(scalarDivide(scalar, base), result)
     }
 
+//    @Test
+//    fun simpleEigenTest() {
+//        val m: Matrix = arrayOf(
+//            arrayOf(2456.0, 1234.0),
+//            arrayOf(111.0, 987.0)
+//        )
+//        val eigenvaluesResult: Vector = arrayOf(
+//            2543.97, 899.026
+//        )
+//        val eigenvectorsResult: Matrix = arrayOf(
+//            arrayOf(14.0268, 1.0),
+//            arrayOf(-0.792563, 1.0)
+//        )
+//        val (eigenvalues, eigenvectors) = eigen(m)
+//
+//        println("eigenvalues found: ${eigenvalues.contentDeepToString()}")
+//        printMatrix("eigenvectors", eigenvectors)
+//
+//        vectorEquals(eigenvalues, eigenvaluesResult, 0.01)
+//        isScalarMultipleOfEachVector(eigenvectors, eigenvectorsResult)
+//    }
+//
+//    @Test
+//    fun simpleEigenTestTwo() {
+//        val m: Matrix = arrayOf(
+//            arrayOf(35.0, 45.0, 55.0),
+//            arrayOf(75.0, 83.0, 95.0),
+//            arrayOf(105.0, 115.0, 127.0)
+//        )
+//        val eigenvectorsResult: Matrix = arrayOf(
+//            arrayOf(0.402557, 0.733662, 1.0),
+//            arrayOf(-1.43706, 0.140923, 1.0),
+//            arrayOf(0.960684, -1.98979, 1.0)
+//        )
+//        val eigenvaluesResult: Vector = arrayOf(
+//            253.64, 7.68538, 0.954181
+//        )
+//        val (eigenvalues, eigenvectors) = eigen(m)
+//
+//        println("eigenvalues found: ${eigenvalues.contentDeepToString()}")
+//        printMatrix("eigenvectors", eigenvectors)
+//
+//        vectorEquals(eigenvalues, eigenvaluesResult, 0.01)
+//        isScalarMultipleOfEachVector(eigenvectors, eigenvectorsResult)
+//    }
+
     @Test
-    fun simpleEigenTest() {
-        val m: Matrix = arrayOf(
-            arrayOf(2456.0, 1234.0),
-            arrayOf(111.0, 987.0)
+    fun identityTest() {
+        val answer: Matrix = arrayOf(
+            arrayOf(1.0, 0.0, 0.0),
+            arrayOf(0.0, 1.0, 0.0),
+            arrayOf(0.0, 0.0, 1.0)
         )
-        val eigenvaluesResult: Vector = arrayOf(
-            2543.97, 899.026
-        )
-        val eigenvectorsResult: Matrix = arrayOf(
-            arrayOf(14.0268, 1.0),
-            arrayOf(-0.792563, 1.0)
-        )
-        val (eigenvalues, eigenvectors) = eigen(m)
-
-        println("eigenvalues found: ${eigenvalues.contentDeepToString()}")
-        printMatrix("eigenvectors", eigenvectors)
-
-        vectorEquals(eigenvalues, eigenvaluesResult, 0.01)
-        isScalarMultipleOfEachVector(eigenvectors, eigenvectorsResult)
+        val attempt: Matrix = identity(3)
+        matrixEquals(answer, attempt)
     }
 
     @Test
-    fun simpleEigenTestTwo() {
-        val m: Matrix = arrayOf(
-            arrayOf(35.0, 45.0, 55.0),
-            arrayOf(75.0, 83.0, 95.0),
-            arrayOf(105.0, 115.0, 127.0)
+    fun adjointTest() {
+        val base: Matrix = arrayOf(
+            arrayOf(3.0, 1.0, -1.0),
+            arrayOf(2.0, -2.0, 0.0),
+            arrayOf(1.0, 2.0, -1.0)
         )
-        val eigenvectorsResult: Matrix = arrayOf(
-            arrayOf(0.402557, 0.733662, 1.0),
-            arrayOf(-1.43706, 0.140923, 1.0),
-            arrayOf(0.960684, -1.98979, 1.0)
+        val answer: Matrix = arrayOf(
+            arrayOf(2.0, -1.0, -2.0),
+            arrayOf(2.0, -2.0, -2.0),
+            arrayOf(6.0, -5.0, -8.0)
         )
-        val eigenvaluesResult: Vector = arrayOf(
-            253.64, 7.68538, 0.954181
-        )
-        val (eigenvalues, eigenvectors) = eigen(m)
-
-        println("eigenvalues found: ${eigenvalues.contentDeepToString()}")
-        printMatrix("eigenvectors", eigenvectors)
-
-        vectorEquals(eigenvalues, eigenvaluesResult, 0.01)
-        isScalarMultipleOfEachVector(eigenvectors, eigenvectorsResult)
+        matrixEquals(adjoint(base), answer)
     }
 
-    //TODO: write more matrix eigen() ???
+    @Test
+    fun subMatrixTest() {
+        val base: Matrix = arrayOf(
+            arrayOf(1.0, 4.0, 9.0),
+            arrayOf(2.0, 10.0, 11.0),
+            arrayOf(3.0, 5.0, 23.0)
+        )
+        val answer: Matrix = arrayOf(
+            arrayOf(10.0, 11.0),
+            arrayOf(5.0, 23.0)
+        )
+        matrixEquals(subMatrix(base, 0,0), answer)
+    }
+
+    @Test
+    fun determinantTest() {
+        val base: Matrix = arrayOf(
+            arrayOf(1.0, 4.0, 9.0),
+            arrayOf(2.0, 10.0, 11.0),
+            arrayOf(3.0, 5.0, 23.0)
+        )
+        val answer: Double = -57.0
+        doubleComparison(answer, determinant(base))
+    }
+
+    @Test
+    fun inverseTest() {
+        val base: Matrix = arrayOf(
+            arrayOf(1.0, 4.0, 9.0),
+            arrayOf(2.0, 10.0, 11.0),
+            arrayOf(3.0, 5.0, 23.0)
+        )
+        val answer: Matrix = arrayOf(
+            arrayOf(-3.070175438596491228, 0.8245614035087719297, 0.8070175438596491228),
+            arrayOf(0.2280701754385964912, 0.07017543859649122808, -0.12280701754385964912),
+            arrayOf(0.35087719298245614035, -0.12280701754385964912, -0.035087719298245614035)
+        )
+        printMatrix("test", inverse(base))
+        matrixEquals(answer, inverse(base))
+    }
 }
